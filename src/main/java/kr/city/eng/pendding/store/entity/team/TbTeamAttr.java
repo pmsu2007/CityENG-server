@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import kr.city.eng.pendding.store.entity.TbEntity;
+import kr.city.eng.pendding.store.entity.TbDateEntity;
 import kr.city.eng.pendding.store.entity.enums.AttrType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,7 +19,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "TB_TEAM_ATTRIBUTE")
-public class TbTeamAttr extends TbEntity {
+public class TbTeamAttr extends TbDateEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

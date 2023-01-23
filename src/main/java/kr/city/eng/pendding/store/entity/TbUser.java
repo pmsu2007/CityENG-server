@@ -2,13 +2,11 @@ package kr.city.eng.pendding.store.entity;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import kr.city.eng.pendding.store.entity.enums.AuthType;
@@ -21,24 +19,27 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "TB_USER")
-public class TbUser extends TbEntity {
+public class TbUser extends TbDateEntity {
 
   @Id
   @EqualsAndHashCode.Include
   private String id;
   @Column(nullable = false)
+  private boolean system;
+
+  @Column(nullable = false)
   private String password;
 
   private AuthType authentication = AuthType.SIGNIN;
   private UserRole role = UserRole.USER;
+  @Column(nullable = false)
   private String name;
+  @Column(nullable = false, unique = true)
   private String email;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "image_id")
-  private TbImage image;
+  private String imageUrl;
 
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
   private List<TbTeam> teams;
 
 }

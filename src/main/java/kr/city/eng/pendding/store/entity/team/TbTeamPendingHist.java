@@ -15,8 +15,8 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@Table(name = "TB_TEAM_PENDING_MOVE_HIST")
-public class TbTeamPendingMoveHist {
+@Table(name = "TB_TEAM_PENDING_HIST")
+public class TbTeamPendingHist {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +31,7 @@ public class TbTeamPendingMoveHist {
   @JoinColumn(name = "product_id", nullable = false)
   private TbTeamProduct product;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "from_place_id", nullable = false)
-  private TbTeamPlace fromPlace;
-  @Column(nullable = false)
-  private Integer fromQuantity;
+  private int quantity;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "to_place_id", nullable = false)
@@ -43,6 +39,10 @@ public class TbTeamPendingMoveHist {
   @Column(nullable = false)
   private Integer toQuantity;
 
-  private int quantity;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "from_place_id", nullable = false)
+  private TbTeamPlace fromPlace;
+  @Column(nullable = false)
+  private Integer fromQuantity;
 
 }

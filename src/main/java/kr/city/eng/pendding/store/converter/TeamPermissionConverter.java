@@ -1,6 +1,8 @@
 package kr.city.eng.pendding.store.converter;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
@@ -12,12 +14,16 @@ public class TeamPermissionConverter implements AttributeConverter<Set<TeamPermi
 
   @Override
   public String convertToDatabaseColumn(Set<TeamPermission> attribute) {
-    return null;
+    return attribute.stream()
+        .map(TeamPermission::getAbbr)
+        .collect(Collectors.joining(","));
   }
 
   @Override
   public Set<TeamPermission> convertToEntityAttribute(String dbData) {
-    return null;
+    return Stream.of(dbData.split(","))
+        .map(it -> TeamPermission.abbrOf(it.trim()))
+        .collect(Collectors.toSet());
   }
 
 }

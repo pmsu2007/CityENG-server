@@ -8,11 +8,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import kr.city.eng.pendding.store.entity.TbEntity;
-import kr.city.eng.pendding.store.entity.TbImage;
+import kr.city.eng.pendding.store.entity.TbDateEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,7 +18,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "TB_TEAM_PRODUCT")
-public class TbTeamProduct extends TbEntity {
+public class TbTeamProduct extends TbDateEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,10 +27,9 @@ public class TbTeamProduct extends TbEntity {
 
   @Column(nullable = false)
   private String name;
+  private String barcode;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "image_id")
-  private TbImage image;
+  private String imageUrl;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "team_id", nullable = false)
