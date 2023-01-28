@@ -23,10 +23,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ApiTeamService {
 
-  private final TbUserRepo storeUser;
-
   private final TbTeamRepo storeTeam;
   private final TbTeamMapper teamMapper;
+
+  private final TbUserRepo storeUser;
 
   private TbTeam findByIdOrThrow(Long id) {
     return storeTeam.findById(id)
@@ -39,7 +39,7 @@ public class ApiTeamService {
   }
 
   @Transactional
-  public List<Team> getTeams() {
+  public List<Team> getEntities() {
     return storeTeam.findAll().stream()
         .map(teamMapper::toDto)
         .collect(Collectors.toList());
@@ -51,7 +51,7 @@ public class ApiTeamService {
   }
 
   @Transactional
-  public Team getTeamOrThrow(Long id) {
+  public Team getOrThrow(Long id) {
     return teamMapper.toDto(findByIdOrThrow(id));
   }
 
@@ -63,9 +63,9 @@ public class ApiTeamService {
   }
 
   @Transactional
-  public Team updateOrThrow(Long id, TeamDto team) {
+  public Team updateOrThrow(Long id, TeamDto dto) {
     TbTeam entity = findByIdOrThrow(id);
-    teamMapper.updateEntity(entity, team);
+    teamMapper.updateEntity(entity, dto);
     return teamMapper.toDto(storeTeam.save(entity));
   }
 

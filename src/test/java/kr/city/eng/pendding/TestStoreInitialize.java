@@ -38,6 +38,7 @@ public class TestStoreInitialize {
 
   public TbTeam initTeam() {
     TbTeam entity = new TbTeam();
+    entity.setUser(initAdminUser());
     entity.setName("Team-" + RandomStringUtils.randomAlphabetic(2));
     entity.setCreatedAt(System.currentTimeMillis());
     entity.setUpdatedAt(System.currentTimeMillis());

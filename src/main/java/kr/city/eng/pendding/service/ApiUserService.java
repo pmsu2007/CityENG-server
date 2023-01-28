@@ -37,7 +37,7 @@ public class ApiUserService {
   }
 
   @Transactional
-  public User getUserOrThrow() {
+  public User getOrThrow() {
     TbUser user = findUserOrThrow(AppUtil.getAuthUser());
     return userMapper.toDto(user);
   }

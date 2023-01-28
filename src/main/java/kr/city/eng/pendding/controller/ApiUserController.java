@@ -35,7 +35,7 @@ public class ApiUserController {
 
   @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
   public User getUser() {
-    return service.getUserOrThrow();
+    return service.getOrThrow();
   }
 
   @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)

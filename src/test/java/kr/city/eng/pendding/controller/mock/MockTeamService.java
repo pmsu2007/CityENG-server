@@ -22,7 +22,7 @@ public class MockTeamService extends MockService {
     return "/api" + url;
   }
 
-  private Team convertTeam(MvcResult result) throws Exception {
+  private Team convertDto(MvcResult result) throws Exception {
     String json = result.getResponse().getContentAsString();
     return getData(json, new TypeReference<Team>() {
     });
@@ -43,7 +43,7 @@ public class MockTeamService extends MockService {
         .andExpect(jsonPath("$.id", is(notNullValue())))
         .andReturn();
 
-    return convertTeam(result);
+    return convertDto(result);
   }
 
   public Team getById(Long id) throws Exception {
@@ -53,7 +53,7 @@ public class MockTeamService extends MockService {
         .andExpect(jsonPath("$.id", is(notNullValue())))
         .andReturn();
 
-    return convertTeam(result);
+    return convertDto(result);
   }
 
   public Team update(Long id, TeamDto dto) throws Exception {
@@ -65,7 +65,7 @@ public class MockTeamService extends MockService {
         .andExpect(jsonPath("$.id", is(notNullValue())))
         .andReturn();
 
-    return convertTeam(result);
+    return convertDto(result);
   }
 
   public void delete(Long id) throws Exception {

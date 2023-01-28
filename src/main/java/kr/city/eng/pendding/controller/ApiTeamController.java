@@ -26,27 +26,27 @@ public class ApiTeamController {
 
   private final ApiTeamService service;
 
+  @PostMapping(value = "/team", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(code = HttpStatus.CREATED)
+  public Team createTeam(@RequestBody TeamDto dto) {
+    dto.validate();
+    return service.createOrThrow(dto);
+  }
+
   @GetMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
   public List<Team> getTeams() {
-    return service.getTeams();
+    return service.getEntities();
   }
 
   @GetMapping(value = "/teams/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public Team getTeam(@PathVariable Long id) {
-    return service.getTeamOrThrow(id);
-  }
-
-  @PostMapping(value = "/team", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(code = HttpStatus.CREATED)
-  public Team createTeam(@RequestBody TeamDto team) {
-    team.validate();
-    return service.createOrThrow(team);
+    return service.getOrThrow(id);
   }
 
   @PutMapping(value = "/teams/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Team updateTeam(@PathVariable Long id, @RequestBody TeamDto team) {
-    team.validate();
-    return service.updateOrThrow(id, team);
+  public Team updateTeam(@PathVariable Long id, @RequestBody TeamDto dto) {
+    dto.validate();
+    return service.updateOrThrow(id, dto);
   }
 
   @DeleteMapping(value = "/teams/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
