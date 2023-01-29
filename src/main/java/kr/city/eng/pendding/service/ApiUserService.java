@@ -26,40 +26,40 @@ import lombok.RequiredArgsConstructor;
 public class ApiUserService {
 
   private final BCryptPasswordEncoder passwordEncoder;
-  private final TbUserRepo storeUser;
+  private final TbUserRepo store;
 
-  private final TbUserMapper userMapper;
-  private final TbTeamMapper teamMapper;
+  private final TbUserMapper mapper;
+  private final TbTeamMapper mapperTeam;
 
   private TbUser findUserOrThrow(String userId) {
-    return storeUser.findById(userId)
+    return store.findById(userId)
         .orElseThrow(() -> ExceptionUtil.id(userId, TbUser.class.getName()));
   }
 
   @Transactional
   public User getOrThrow() {
     TbUser user = findUserOrThrow(AppUtil.getAuthUser());
-    return userMapper.toDto(user);
+    return mapper.toDto(user);
   }
 
   @Transactional
   public User createOrThrow(UserDto dto) {
-    TbUser entity = userMapper.toEntity(dto);
+    TbUser entity = mapper.toEntity(dto);
     entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-    return userMapper.toDto(storeUser.save(entity));
+    return mapper.toDto(store.save(entity));
   }
 
   @Transactional
   public User updateOrThrow(UserDto dto) {
     TbUser entity = findUserOrThrow(AppUtil.getAuthUser());
-    userMapper.updateEntity(entity, dto);
-    return userMapper.toDto(storeUser.save(entity));
+    mapper.updateEntity(entity, dto);
+    return mapper.toDto(store.save(entity));
   }
 
   @Transactional
   public void deleteOrThrow() {
     TbUser entity = findUserOrThrow(AppUtil.getAuthUser());
-    storeUser.delete(entity);
+    store.delete(entity);
   }
 
   @Transactional
@@ -73,24 +73,24 @@ public class ApiUserService {
     String password = passwordEncoder.encode(dto.getNewPassword());
     entity.setPassword(password);
     entity.setUpdatedAt(System.currentTimeMillis());
-    storeUser.save(entity);
+    store.save(entity);
   }
 
   @Transactional
   public boolean existId(String id) {
-    return storeUser.existsById(id);
+    return store.existsById(id);
   }
 
   @Transactional
   public boolean existEmail(String email) {
-    return storeUser.existsByEmail(email);
+    return store.existsByEmail(email);
   }
 
   @Transactional
   public List<TeamInfo> getTeams() {
     TbUser entity = findUserOrThrow(AppUtil.getAuthUser());
     return entity.getTeams().stream()
-        .map(teamMapper::toTeamInfo)
+        .map(mapperTeam::toTeamInfo)
         .collect(Collectors.toList());
   }
 
