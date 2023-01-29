@@ -26,10 +26,10 @@ public class TbTeamAttr extends TbDateEntity {
   @EqualsAndHashCode.Include
   private Long id;
 
-  private int index;
   @Column(nullable = false)
   private String name;
 
+  private int index;
   private AttrType type = AttrType.STRING;
 
   @ManyToOne(fetch = FetchType.LAZY)
