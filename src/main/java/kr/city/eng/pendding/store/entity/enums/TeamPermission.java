@@ -1,5 +1,9 @@
 package kr.city.eng.pendding.store.entity.enums;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
@@ -26,6 +30,15 @@ public enum TeamPermission {
       }
     }
     return null;
+  }
+
+  public static Set<TeamPermission> admin() {
+    return Sets.newHashSet(ROLE, PRODUCT, ATTRIBUTE,
+        PENDING_IN, PENDING_OUT, PENDING_ADJUST, PENDING_MOVE);
+  }
+
+  public static Set<TeamPermission> member() {
+    return Sets.newHashSet(PENDING_IN, PENDING_OUT, PENDING_ADJUST, PENDING_MOVE);
   }
 
 }

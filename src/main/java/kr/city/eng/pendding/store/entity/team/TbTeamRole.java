@@ -43,4 +43,28 @@ public class TbTeamRole extends TbDateEntity {
   @JoinColumn(name = "team_id", nullable = false)
   private TbTeam team;
 
+  public static TbTeamRole admin() {
+    TbTeamRole entity = new TbTeamRole();
+    entity.setSystem(true);
+    entity.setName("admin");
+    entity.setPermissions(TeamPermission.admin());
+
+    long timestamp = System.currentTimeMillis();
+    entity.setCreatedAt(timestamp);
+    entity.setUpdatedAt(timestamp);
+    return entity;
+  }
+
+  public static TbTeamRole member() {
+    TbTeamRole entity = new TbTeamRole();
+    entity.setSystem(true);
+    entity.setName("member");
+    entity.setPermissions(TeamPermission.member());
+
+    long timestamp = System.currentTimeMillis();
+    entity.setCreatedAt(timestamp);
+    entity.setUpdatedAt(timestamp);
+    return entity;
+  }
+
 }
