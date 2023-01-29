@@ -10,5 +10,7 @@ import lombok.ToString;
 public class TeamPlace extends TeamPlaceDto {
 
   private Long id;
+  private Long createdAt;
+  private Long updatedAt;
 
 }

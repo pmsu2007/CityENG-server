@@ -18,9 +18,9 @@ public interface TbTeamPlaceMapper {
   @Mapping(target = "updatedAt", expression = "java(System.currentTimeMillis())")
   TbTeamPlace toEntity(TeamPlaceDto dto);
 
-  default void updateEntity(TbTeamPlace entity, TeamPlaceDto team) {
-    entity.setName(team.getName());
-    entity.setMemo(team.getMemo());
+  default void updateEntity(TbTeamPlace entity, TeamPlaceDto dto) {
+    entity.setName(dto.getName());
+    entity.setMemo(dto.getMemo());
     entity.setUpdatedAt(System.currentTimeMillis());
   }
 

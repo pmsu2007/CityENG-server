@@ -22,13 +22,13 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ApiTeamPlaceService {
 
-  private final TbTeamPlaceRepo storePlace;
-  private final TbTeamPlaceMapper palceMapper;
+  private final TbTeamPlaceRepo store;
+  private final TbTeamPlaceMapper mapper;
 
   private final TbTeamRepo storeTeam;
 
   private TbTeamPlace findByIdOrThrow(Long id) {
-    return storePlace.findById(id)
+    return store.findById(id)
         .orElseThrow(() -> ExceptionUtil.id(id, TbTeamPlace.class.getName()));
   }
 
@@ -40,39 +40,39 @@ public class ApiTeamPlaceService {
   @Transactional
   public List<TeamPlace> getEntities(Long teamId) {
     TbTeam team = findTeamOrThrow(teamId);
-    return storePlace.findByTeam(team).stream()
-        .map(palceMapper::toDto)
+    return store.findByTeam(team).stream()
+        .map(mapper::toDto)
         .collect(Collectors.toList());
   }
 
   @Transactional
   public Page<TeamPlace> getEntities(Long teamId, Pageable pageable) {
     TbTeam team = findTeamOrThrow(teamId);
-    return storePlace.findByTeam(team, pageable).map(palceMapper::toDto);
+    return store.findByTeam(team, pageable).map(mapper::toDto);
   }
 
   @Transactional
   public TeamPlace createOrThrow(Long teamId, TeamPlaceDto dto) {
-    TbTeamPlace entity = palceMapper.toEntity(dto);
+    TbTeamPlace entity = mapper.toEntity(dto);
     entity.setTeam(findTeamOrThrow(teamId));
-    return palceMapper.toDto(storePlace.save(entity));
+    return mapper.toDto(store.save(entity));
   }
 
   @Transactional
   public TeamPlace getOrThrow(Long id) {
-    return palceMapper.toDto(findByIdOrThrow(id));
+    return mapper.toDto(findByIdOrThrow(id));
   }
 
   @Transactional
   public TeamPlace updateOrThrow(Long id, TeamPlaceDto team) {
     TbTeamPlace entity = findByIdOrThrow(id);
-    palceMapper.updateEntity(entity, team);
-    return palceMapper.toDto(storePlace.save(entity));
+    mapper.updateEntity(entity, team);
+    return mapper.toDto(store.save(entity));
   }
 
   @Transactional
   public void deleteOrThrow(Long id) {
-    storePlace.deleteById(id);
+    store.deleteById(id);
   }
 
 }

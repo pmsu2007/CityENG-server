@@ -31,7 +31,7 @@ public class ApiTeamPlaceController {
 
   @PostMapping(value = "/{teamId}/place", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.CREATED)
-  public TeamPlace createTeam(@PathVariable Long teamId, @RequestBody TeamPlaceDto dto) {
+  public TeamPlace createTeamPlace(@PathVariable Long teamId, @RequestBody TeamPlaceDto dto) {
     dto.validate();
     return service.createOrThrow(teamId, dto);
   }
@@ -52,14 +52,14 @@ public class ApiTeamPlaceController {
   }
 
   @PutMapping(value = "/places/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public TeamPlace updateTeam(@PathVariable Long id, @RequestBody TeamPlaceDto dto) {
+  public TeamPlace updateTeamPlace(@PathVariable Long id, @RequestBody TeamPlaceDto dto) {
     dto.validate();
     return service.updateOrThrow(id, dto);
   }
 
   @DeleteMapping(value = "/places/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.NO_CONTENT)
-  public void deleteTeam(@PathVariable Long id) {
+  public void deleteTeamPlace(@PathVariable Long id) {
     service.deleteOrThrow(id);
   }
 

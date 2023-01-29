@@ -36,7 +36,7 @@ public class ApiTeamPlaceControllerTest {
   @Autowired
   TestStoreInitialize initialize;
   @Autowired
-  ObjectMapper mapper;
+  ObjectMapper objectMapper;
 
   @Autowired
   ApiTeamPlaceController controller;
@@ -56,9 +56,9 @@ public class ApiTeamPlaceControllerTest {
 
     mockMvc = MockMvcBuilders.standaloneSetup(controller)
         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-        .setMessageConverters(new MappingJackson2HttpMessageConverter(mapper)).build();
+        .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper)).build();
 
-    mockService.setUp(mapper, mockMvc);
+    mockService.setUp(objectMapper, mockMvc);
   }
 
   @Test

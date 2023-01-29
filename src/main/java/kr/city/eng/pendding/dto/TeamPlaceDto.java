@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 public class TeamPlaceDto implements AppDto {
 
-  private String name;
-  private String memo;
+  protected String name;
+  protected String memo;
 
   @Override
   public void validate() {
