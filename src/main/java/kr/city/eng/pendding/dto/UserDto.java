@@ -9,13 +9,13 @@ import lombok.Data;
 @Data
 public class UserDto implements AppDto {
 
-  private String id;
-  private String password;
+  protected String id;
+  protected String password;
 
-  private AuthType authentication;
-  private String name;
-  private String email;
-  private String imageUrl;
+  protected AuthType authentication;
+  protected String name;
+  protected String email;
+  protected String imageUrl;
 
   @Override
   public void validate() {

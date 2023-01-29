@@ -8,9 +8,9 @@ import lombok.Data;
 @Data
 public class TeamDto implements AppDto {
 
-  private String name;
-  private String imageUrl;
-  private String memo;
+  protected String name;
+  protected String imageUrl;
+  protected String memo;
 
   @Override
   public void validate() {

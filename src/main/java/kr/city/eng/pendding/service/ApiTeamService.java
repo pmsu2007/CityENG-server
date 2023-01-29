@@ -12,8 +12,10 @@ import kr.city.eng.pendding.dto.Team;
 import kr.city.eng.pendding.dto.TeamDto;
 import kr.city.eng.pendding.store.entity.TbUser;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
+import kr.city.eng.pendding.store.entity.team.TbTeamRole;
 import kr.city.eng.pendding.store.mapper.TbTeamMapper;
 import kr.city.eng.pendding.store.repo.TbTeamRepo;
+import kr.city.eng.pendding.store.repo.TbTeamRoleRepo;
 import kr.city.eng.pendding.store.repo.TbUserRepo;
 import kr.city.eng.pendding.util.AppUtil;
 import kr.city.eng.pendding.util.ExceptionUtil;
@@ -23,13 +25,14 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ApiTeamService {
 
-  private final TbTeamRepo storeTeam;
-  private final TbTeamMapper teamMapper;
+  private final TbTeamRepo store;
+  private final TbTeamMapper mapper;
 
+  private final TbTeamRoleRepo storeRole;
   private final TbUserRepo storeUser;
 
   private TbTeam findByIdOrThrow(Long id) {
-    return storeTeam.findById(id)
+    return store.findById(id)
         .orElseThrow(() -> ExceptionUtil.id(id, TbTeam.class.getName()));
   }
 
@@ -40,38 +43,50 @@ public class ApiTeamService {
 
   @Transactional
   public List<Team> getEntities() {
-    return storeTeam.findAll().stream()
-        .map(teamMapper::toDto)
+    return store.findAll().stream()
+        .map(mapper::toDto)
         .collect(Collectors.toList());
   }
 
   @Transactional
   public Page<Team> getTeamsWithPage(Pageable pageable) {
-    return storeTeam.findAll(pageable).map(teamMapper::toDto);
+    return store.findAll(pageable).map(mapper::toDto);
   }
 
   @Transactional
   public Team getOrThrow(Long id) {
-    return teamMapper.toDto(findByIdOrThrow(id));
+    return mapper.toDto(findByIdOrThrow(id));
   }
 
   @Transactional
   public Team createOrThrow(TeamDto dto) {
-    TbTeam entity = teamMapper.toEntity(dto);
+    TbTeam entity = mapper.toEntity(dto);
     entity.setUser(findUserOrThrow(AppUtil.getAuthUser()));
-    return teamMapper.toDto(storeTeam.save(entity));
+    entity = store.save(entity);
+    createRoleOrThrow(entity);
+    return mapper.toDto(entity);
+  }
+
+  private void createRoleOrThrow(TbTeam team) {
+    TbTeamRole entity = TbTeamRole.admin();
+    entity.setTeam(team);
+    storeRole.save(entity);
+
+    entity = TbTeamRole.member();
+    entity.setTeam(team);
+    storeRole.save(entity);
   }
 
   @Transactional
   public Team updateOrThrow(Long id, TeamDto dto) {
     TbTeam entity = findByIdOrThrow(id);
-    teamMapper.updateEntity(entity, dto);
-    return teamMapper.toDto(storeTeam.save(entity));
+    mapper.updateEntity(entity, dto);
+    return mapper.toDto(store.save(entity));
   }
 
   @Transactional
   public void deleteOrThrow(Long id) {
-    storeTeam.deleteById(id);
+    store.deleteById(id);
   }
 
 }

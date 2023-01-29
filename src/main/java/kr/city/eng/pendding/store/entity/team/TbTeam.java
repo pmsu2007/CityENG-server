@@ -48,6 +48,9 @@ public class TbTeam extends TbDateEntity {
   private List<TbTeamPlace> teamPlaces;
 
   @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+  private List<TbTeamRole> teamRoles;
+
+  @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
   private List<TbTeamUser> teamUsers;
 
 }

@@ -42,7 +42,7 @@ public class ApiUserConterollerTest {
   @Autowired
   TestStoreInitialize initialize;
   @Autowired
-  ObjectMapper mapper;
+  ObjectMapper objectMapper;
   @Autowired
   BCryptPasswordEncoder passwordEncoder;
   @Autowired
@@ -66,10 +66,10 @@ public class ApiUserConterollerTest {
     initialize.clearAll();
 
     mockMvc = MockMvcBuilders.standaloneSetup(controller, tamController)
-        .setMessageConverters(new MappingJackson2HttpMessageConverter(mapper)).build();
+        .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper)).build();
 
-    mockService.setUp(mapper, mockMvc);
-    mockTeamService.setUp(mapper, mockMvc);
+    mockService.setUp(objectMapper, mockMvc);
+    mockTeamService.setUp(objectMapper, mockMvc);
   }
 
   @Test
