@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.google.common.collect.Lists;
+
 import kr.city.eng.pendding.store.entity.TbDateEntity;
 import kr.city.eng.pendding.store.entity.TbUser;
 import lombok.Data;
@@ -42,15 +44,18 @@ public class TbTeam extends TbDateEntity {
   private TbUser user;
 
   @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-  private List<TbTeamProduct> teamProducts;
+  private List<TbTeamProduct> teamProducts = Lists.newArrayList();
 
   @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-  private List<TbTeamPlace> teamPlaces;
+  private List<TbTeamAttr> teamAttributes = Lists.newArrayList();
 
   @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-  private List<TbTeamRole> teamRoles;
+  private List<TbTeamPlace> teamPlaces = Lists.newArrayList();
 
   @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-  private List<TbTeamUser> teamUsers;
+  private List<TbTeamRole> teamRoles = Lists.newArrayList();
+
+  @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+  private List<TbTeamUser> teamUsers = Lists.newArrayList();
 
 }

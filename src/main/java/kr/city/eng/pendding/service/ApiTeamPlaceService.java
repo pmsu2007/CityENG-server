@@ -14,6 +14,7 @@ import kr.city.eng.pendding.store.entity.team.TbTeam;
 import kr.city.eng.pendding.store.entity.team.TbTeamPlace;
 import kr.city.eng.pendding.store.mapper.TbTeamPlaceMapper;
 import kr.city.eng.pendding.store.repo.TbTeamPlaceRepo;
+import kr.city.eng.pendding.store.repo.TbTeamProdPlaceRepo;
 import kr.city.eng.pendding.store.repo.TbTeamRepo;
 import kr.city.eng.pendding.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class ApiTeamPlaceService {
 
   private final TbTeamPlaceRepo store;
+  private final TbTeamProdPlaceRepo storeProdPlace;
   private final TbTeamPlaceMapper mapper;
 
   private final TbTeamRepo storeTeam;
@@ -72,6 +74,7 @@ public class ApiTeamPlaceService {
 
   @Transactional
   public void deleteOrThrow(Long id) {
+    storeProdPlace.deleteByPlaceId(id);
     store.deleteById(id);
   }
 

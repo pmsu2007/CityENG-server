@@ -75,6 +75,7 @@ public class ApiTeamAttrService {
 
   @Transactional
   public void deleteOrThrow(Long id) {
+    storeProdAttr.deleteByAttributeId(id);
     store.deleteById(id);
   }
 

@@ -13,7 +13,9 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Data
 @EqualsAndHashCode
 @Entity
@@ -37,5 +39,11 @@ public class TbTeamProdAttr {
 
   @Column(nullable = false)
   private String attrValue;
+
+  public TbTeamProdAttr(TbTeamProduct product, TbTeamAttr attribute, String attrValue) {
+    this.product = product;
+    this.attribute = attribute;
+    this.attrValue = attrValue;
+  }
 
 }

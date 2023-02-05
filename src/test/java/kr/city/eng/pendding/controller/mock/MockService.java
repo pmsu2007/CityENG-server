@@ -51,6 +51,12 @@ public abstract class MockService {
         .accept(MediaType.APPLICATION_JSON_VALUE);
   }
 
+  protected MockHttpServletRequestBuilder apiPatch(String url, Object... parameter) {
+    return MockMvcRequestBuilders.patch(getUrl(url), parameter)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .accept(MediaType.APPLICATION_JSON_VALUE);
+  }
+
   protected MockHttpServletRequestBuilder apiDel(String url, Object... parameter) {
     return MockMvcRequestBuilders.delete(getUrl(url), parameter)
         .contentType(MediaType.APPLICATION_JSON_VALUE)

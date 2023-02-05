@@ -33,6 +33,7 @@ public class TestStoreConfig {
 
     dataSourceBuilder.driverClassName("org.h2.Driver");
     dataSourceBuilder.url("jdbc:h2:mem:database");
+    // dataSourceBuilder.url("jdbc:h2:./test");
     dataSourceBuilder.username("sa");
     return dataSourceBuilder.build();
   }
@@ -52,7 +53,7 @@ public class TestStoreConfig {
     jpaProperties.setProperty("hibernate.implicit_naming_strategy",
         "org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy");
     factoryBean.setJpaProperties(jpaProperties);
-    factoryBean.setPersistenceUnitName("gpStore");
+    factoryBean.setPersistenceUnitName("h2Store");
 
     factoryBean.setDataSource(dataSource);
     factoryBean.setJpaVendorAdapter(jpaVendorAdapter);

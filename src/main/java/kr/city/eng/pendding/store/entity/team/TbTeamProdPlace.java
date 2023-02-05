@@ -11,7 +11,9 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Data
 @EqualsAndHashCode
 @Entity
@@ -32,5 +34,11 @@ public class TbTeamProdPlace {
   private TbTeamPlace place;
 
   private int quantity;
+
+  public TbTeamProdPlace(TbTeamProduct product, TbTeamPlace place, int quantity) {
+    this.product = product;
+    this.place = place;
+    this.quantity = quantity;
+  }
 
 }
