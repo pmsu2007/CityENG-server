@@ -53,7 +53,7 @@ public class StoreConfig {
     jpaProperties.setProperty("hibernate.implicit_naming_strategy",
         "org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy");
     factoryBean.setJpaProperties(jpaProperties);
-    factoryBean.setPersistenceUnitName("gpStore");
+    factoryBean.setPersistenceUnitName("h2Store");
 
     factoryBean.setDataSource(dataSource);
     factoryBean.setJpaVendorAdapter(jpaVendorAdapter);
