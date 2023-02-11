@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
+import kr.city.eng.pendding.service.StoreInitializeService;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootApplication
@@ -20,6 +21,9 @@ public class PenddingApplication {
   @EventListener(ApplicationReadyEvent.class)
   public void init(ApplicationReadyEvent event) {
     ApplicationContext context = event.getApplicationContext();
+
+    // DB정보 확인
+    context.getBean(StoreInitializeService.class).checkSchema();
 
     Environment env = context.getBean(Environment.class);
     log.info("app: {}", env.getProperty("info.app.description"));
