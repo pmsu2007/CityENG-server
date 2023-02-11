@@ -16,6 +16,7 @@ public interface TbTeamMapper {
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "user", ignore = true)
   @Mapping(target = "teamProducts", ignore = true)
+  @Mapping(target = "teamAttributes", ignore = true)
   @Mapping(target = "teamPlaces", ignore = true)
   @Mapping(target = "teamRoles", ignore = true)
   @Mapping(target = "teamUsers", ignore = true)
