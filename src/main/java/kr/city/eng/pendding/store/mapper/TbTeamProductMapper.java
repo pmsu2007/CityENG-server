@@ -2,7 +2,6 @@ package kr.city.eng.pendding.store.mapper;
 
 import static kr.city.eng.pendding.store.entity.team.QTbTeamProdAttr.tbTeamProdAttr;
 import static kr.city.eng.pendding.store.entity.team.QTbTeamProdPlace.tbTeamProdPlace;
-import static kr.city.eng.pendding.store.entity.team.QTbTeamProduct.tbTeamProduct;
 
 import java.util.Map;
 
@@ -14,10 +13,12 @@ import com.querydsl.core.Tuple;
 
 import kr.city.eng.pendding.dto.TeamProduct;
 import kr.city.eng.pendding.dto.TeamProductDto;
+import kr.city.eng.pendding.store.entity.team.QTbTeamProduct;
 import kr.city.eng.pendding.store.entity.team.TbTeamProduct;
 
 @Mapper
 public interface TbTeamProductMapper {
+  public static final QTbTeamProduct SCHEMA = QTbTeamProduct.tbTeamProduct;
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "team", ignore = true)
@@ -46,38 +47,37 @@ public interface TbTeamProductMapper {
   @Mapping(target = "attributes", ignore = true)
   TeamProduct toDto(TbTeamProduct entity);
 
-  default TeamProduct tupleToTeamProduct(Tuple tuple) {
-    TeamProduct dto = new TeamProduct();
-    dto.setId(tuple.get(tbTeamProduct.id));
-    dto.setBarcode(tuple.get(tbTeamProduct.barcode));
-    dto.setName(tuple.get(tbTeamProduct.name));
-    dto.setImageUrl(tuple.get(tbTeamProduct.imageUrl));
-    dto.setCreatedAt(tuple.get(tbTeamProduct.createdAt));
-    dto.setUpdatedAt(tuple.get(tbTeamProduct.updatedAt));
-    return dto;
-  }
+  @Mapping(target = "id", expression = "java(tuple.get(SCHEMA.id))")
+  @Mapping(target = "barcode", expression = "java(tuple.get(SCHEMA.barcode))")
+  @Mapping(target = "name", expression = "java(tuple.get(SCHEMA.name))")
+  @Mapping(target = "imageUrl", expression = "java(tuple.get(SCHEMA.imageUrl))")
+  @Mapping(target = "createdAt", expression = "java(tuple.get(SCHEMA.createdAt))")
+  @Mapping(target = "updatedAt", expression = "java(tuple.get(SCHEMA.updatedAt))")
+  @Mapping(target = "places", ignore = true)
+  @Mapping(target = "attributes", ignore = true)
+  TeamProduct toDto(Tuple tuple);
 
-  default void tupleToTeamProdAttr(Tuple tuple, Map<Long, TeamProduct> map) {
+  default void setTeamProdAttr(Tuple tuple, Map<Long, TeamProduct> map) {
     Long id = tuple.get(tbTeamProdAttr.product.id);
     TeamProduct dto;
     if ((dto = map.get(id)) != null) {
-      tupleToTeamProdAttr(tuple, dto);
+      setTeamProdAttr(tuple, dto);
     }
   }
 
-  default void tupleToTeamProdAttr(Tuple tuple, TeamProduct dto) {
+  default void setTeamProdAttr(Tuple tuple, TeamProduct dto) {
     dto.addAttribute(tuple.get(tbTeamProdAttr.id), tuple.get(tbTeamProdAttr.attrValue));
   }
 
-  default void tupleToTeamProdPlace(Tuple tuple, Map<Long, TeamProduct> map) {
+  default void setTeamProdPlace(Tuple tuple, Map<Long, TeamProduct> map) {
     Long id = tuple.get(tbTeamProdPlace.product.id);
     TeamProduct dto;
     if ((dto = map.get(id)) != null) {
-      tupleToTeamProdPlace(tuple, dto);
+      setTeamProdPlace(tuple, dto);
     }
   }
 
-  default void tupleToTeamProdPlace(Tuple tuple, TeamProduct dto) {
+  default void setTeamProdPlace(Tuple tuple, TeamProduct dto) {
     dto.addPlace(tuple.get(tbTeamProdPlace.id), tuple.get(tbTeamProdPlace.quantity));
   }
 

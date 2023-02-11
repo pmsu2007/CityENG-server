@@ -64,26 +64,26 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
         .from(tbTeamProduct)
         .where(tbTeamProduct.id.eq(id))
         .fetch().stream()
-        .map(mapper::tupleToTeamProduct)
+        .map(mapper::toDto)
         .collect(Collectors.toMap(TeamProduct::getId, Function.identity()));
 
     getTeamProdPlaceQuery(map.keySet()).fetch()
-        .forEach(it -> mapper.tupleToTeamProdPlace(it, map));
+        .forEach(it -> mapper.setTeamProdPlace(it, map));
     getTeamProdAttrQuery(map.keySet()).fetch()
-        .forEach(it -> mapper.tupleToTeamProdAttr(it, map));
+        .forEach(it -> mapper.setTeamProdAttr(it, map));
     return map.values().stream().findFirst();
   }
 
   private List<TeamProduct> getDtoByTeam(TbTeam team, String value, Pageable pageable) {
     JPAQuery<Tuple> query = getTeamProductQuery(team, value, pageable);
     Map<Long, TeamProduct> map = query.fetch().stream()
-        .map(mapper::tupleToTeamProduct)
+        .map(mapper::toDto)
         .collect(Collectors.toMap(TeamProduct::getId, Function.identity()));
 
     getTeamProdPlaceQuery(map.keySet()).fetch()
-        .forEach(it -> mapper.tupleToTeamProdPlace(it, map));
+        .forEach(it -> mapper.setTeamProdPlace(it, map));
     getTeamProdAttrQuery(map.keySet()).fetch()
-        .forEach(it -> mapper.tupleToTeamProdAttr(it, map));
+        .forEach(it -> mapper.setTeamProdAttr(it, map));
     return Lists.newArrayList(map.values());
   }
 
