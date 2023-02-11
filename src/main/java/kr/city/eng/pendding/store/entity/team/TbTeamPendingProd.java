@@ -15,8 +15,8 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@Table(name = "TB_TEAM_PENDING_HIST")
-public class TbTeamPendingHist {
+@Table(name = "TB_TEAM_PENDING_PROD")
+public class TbTeamPendingProd {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
