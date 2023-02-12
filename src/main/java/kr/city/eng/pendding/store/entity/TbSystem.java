@@ -1,6 +1,9 @@
 package kr.city.eng.pendding.store.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -17,7 +20,7 @@ public class TbSystem implements TbEntity {
 
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   @Getter
-  public enum Key {
+  public enum Prop {
     VER("version");
 
     private String property;
@@ -25,8 +28,8 @@ public class TbSystem implements TbEntity {
 
   @Id
   @EqualsAndHashCode.Include
-  private String key;
+  private String propKey;
 
-  private String value;
+  private String propVal;
 
 }

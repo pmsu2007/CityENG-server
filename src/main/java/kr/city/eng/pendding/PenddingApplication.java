@@ -23,8 +23,9 @@ public class PenddingApplication {
     ApplicationContext context = event.getApplicationContext();
 
     // DB정보 확인
-    context.getBean(StoreInitializeService.class).checkSchema();
-
+    if (context.containsBean("storeInitializeService")) {
+      context.getBean(StoreInitializeService.class).checkSchema();
+    }
     Environment env = context.getBean(Environment.class);
     log.info("app: {}", env.getProperty("info.app.description"));
     log.info("version: {}", env.getProperty("info.app.version"));

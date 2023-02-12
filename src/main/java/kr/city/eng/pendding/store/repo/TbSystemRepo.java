@@ -6,10 +6,12 @@ import kr.city.eng.pendding.store.entity.TbSystem;
 
 public interface TbSystemRepo extends JpaRepository<TbSystem, String> {
 
+  default String getProperty(String key) {
+    return findById(key).map(TbSystem::getPropVal).orElse("");
+  }
+
   default String getVersion() {
-    return findById(TbSystem.Key.VER.getProperty())
-        .map(TbSystem::getValue)
-        .orElse("");
+    return getProperty(TbSystem.Prop.VER.getProperty());
   }
 
 }
