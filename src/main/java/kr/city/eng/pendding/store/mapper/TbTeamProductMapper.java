@@ -1,8 +1,5 @@
 package kr.city.eng.pendding.store.mapper;
 
-import static kr.city.eng.pendding.store.entity.team.QTbTeamProdAttr.tbTeamProdAttr;
-import static kr.city.eng.pendding.store.entity.team.QTbTeamProdPlace.tbTeamProdPlace;
-
 import java.util.Map;
 
 import org.mapstruct.Mapper;
@@ -13,12 +10,11 @@ import com.querydsl.core.Tuple;
 
 import kr.city.eng.pendding.dto.TeamProduct;
 import kr.city.eng.pendding.dto.TeamProductDto;
-import kr.city.eng.pendding.store.entity.team.QTbTeamProduct;
+import kr.city.eng.pendding.store.StoreConfig;
 import kr.city.eng.pendding.store.entity.team.TbTeamProduct;
 
-@Mapper
+@Mapper(imports = { StoreConfig.class })
 public interface TbTeamProductMapper {
-  public static final QTbTeamProduct SCHEMA = QTbTeamProduct.tbTeamProduct;
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "team", ignore = true)
@@ -47,18 +43,18 @@ public interface TbTeamProductMapper {
   @Mapping(target = "attributes", ignore = true)
   TeamProduct toDto(TbTeamProduct entity);
 
-  @Mapping(target = "id", expression = "java(tuple.get(SCHEMA.id))")
-  @Mapping(target = "barcode", expression = "java(tuple.get(SCHEMA.barcode))")
-  @Mapping(target = "name", expression = "java(tuple.get(SCHEMA.name))")
-  @Mapping(target = "imageUrl", expression = "java(tuple.get(SCHEMA.imageUrl))")
-  @Mapping(target = "createdAt", expression = "java(tuple.get(SCHEMA.createdAt))")
-  @Mapping(target = "updatedAt", expression = "java(tuple.get(SCHEMA.updatedAt))")
+  @Mapping(target = "id", expression = "java(tuple.get(StoreConfig.PRODUCT.id))")
+  @Mapping(target = "barcode", expression = "java(tuple.get(StoreConfig.PRODUCT.barcode))")
+  @Mapping(target = "name", expression = "java(tuple.get(StoreConfig.PRODUCT.name))")
+  @Mapping(target = "imageUrl", expression = "java(tuple.get(StoreConfig.PRODUCT.imageUrl))")
+  @Mapping(target = "createdAt", expression = "java(tuple.get(StoreConfig.PRODUCT.createdAt))")
+  @Mapping(target = "updatedAt", expression = "java(tuple.get(StoreConfig.PRODUCT.updatedAt))")
   @Mapping(target = "places", ignore = true)
   @Mapping(target = "attributes", ignore = true)
   TeamProduct toDto(Tuple tuple);
 
   default void setTeamProdAttr(Tuple tuple, Map<Long, TeamProduct> map) {
-    Long id = tuple.get(tbTeamProdAttr.product.id);
+    Long id = tuple.get(StoreConfig.PROD_ATTR.product.id);
     TeamProduct dto;
     if ((dto = map.get(id)) != null) {
       setTeamProdAttr(tuple, dto);
@@ -66,11 +62,11 @@ public interface TbTeamProductMapper {
   }
 
   default void setTeamProdAttr(Tuple tuple, TeamProduct dto) {
-    dto.addAttribute(tuple.get(tbTeamProdAttr.id), tuple.get(tbTeamProdAttr.attrValue));
+    dto.addAttribute(tuple.get(StoreConfig.PROD_ATTR.id), tuple.get(StoreConfig.PROD_ATTR.attrValue));
   }
 
   default void setTeamProdPlace(Tuple tuple, Map<Long, TeamProduct> map) {
-    Long id = tuple.get(tbTeamProdPlace.product.id);
+    Long id = tuple.get(StoreConfig.PROD_PLACE.product.id);
     TeamProduct dto;
     if ((dto = map.get(id)) != null) {
       setTeamProdPlace(tuple, dto);
@@ -78,7 +74,7 @@ public interface TbTeamProductMapper {
   }
 
   default void setTeamProdPlace(Tuple tuple, TeamProduct dto) {
-    dto.addPlace(tuple.get(tbTeamProdPlace.id), tuple.get(tbTeamProdPlace.quantity));
+    dto.addPlace(tuple.get(StoreConfig.PROD_PLACE.id), tuple.get(StoreConfig.PROD_PLACE.quantity));
   }
 
 }

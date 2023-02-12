@@ -19,6 +19,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.zaxxer.hikari.HikariDataSource;
 
+import kr.city.eng.pendding.store.entity.team.QTbTeamPending;
+import kr.city.eng.pendding.store.entity.team.QTbTeamPendingProd;
+import kr.city.eng.pendding.store.entity.team.QTbTeamProdAttr;
+import kr.city.eng.pendding.store.entity.team.QTbTeamProdPlace;
+import kr.city.eng.pendding.store.entity.team.QTbTeamProduct;
+
 @Profile("!test")
 @Configuration
 @EnableTransactionManagement
@@ -26,6 +32,12 @@ import com.zaxxer.hikari.HikariDataSource;
 public class StoreConfig {
 
   public static final String STORE_PACKAGE = "kr.city.eng.pendding.store";
+
+  public static final QTbTeamPending PENDING = QTbTeamPending.tbTeamPending;
+  public static final QTbTeamPendingProd PENDING_PROD = QTbTeamPendingProd.tbTeamPendingProd;
+  public static final QTbTeamProduct PRODUCT = QTbTeamProduct.tbTeamProduct;
+  public static final QTbTeamProdAttr PROD_ATTR = QTbTeamProdAttr.tbTeamProdAttr;
+  public static final QTbTeamProdPlace PROD_PLACE = QTbTeamProdPlace.tbTeamProdPlace;
 
   @Bean
   @ConfigurationProperties("spring.datasource.hikari")

@@ -7,16 +7,12 @@ import com.querydsl.core.Tuple;
 
 import kr.city.eng.pendding.dto.TeamPending;
 import kr.city.eng.pendding.dto.TeamPendingProd;
-import kr.city.eng.pendding.store.entity.team.QTbTeamPending;
-import kr.city.eng.pendding.store.entity.team.QTbTeamPendingProd;
+import kr.city.eng.pendding.store.StoreConfig;
 import kr.city.eng.pendding.store.entity.team.TbTeamPending;
 import kr.city.eng.pendding.store.entity.team.TbTeamPendingProd;
 
-@Mapper
+@Mapper(imports = { StoreConfig.class })
 public interface TbTeamPendingMapper {
-
-  public static final QTbTeamPending SCHEMA = QTbTeamPending.tbTeamPending;
-  public static final QTbTeamPendingProd PROD = QTbTeamPendingProd.tbTeamPendingProd;
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "team", ignore = true)
@@ -33,10 +29,10 @@ public interface TbTeamPendingMapper {
   @Mapping(target = "products", ignore = true)
   TeamPending toDto(TbTeamPending entity);
 
-  @Mapping(target = "id", expression = "java(tuple.get(SCHEMA.id))")
-  @Mapping(target = "type", expression = "java(tuple.get(SCHEMA.type))")
-  @Mapping(target = "createdAt", expression = "java(tuple.get(SCHEMA.createdAt))")
-  @Mapping(target = "memo", expression = "java(tuple.get(SCHEMA.memo))")
+  @Mapping(target = "id", expression = "java(tuple.get(StoreConfig.PENDING.id))")
+  @Mapping(target = "type", expression = "java(tuple.get(StoreConfig.PENDING.type))")
+  @Mapping(target = "createdAt", expression = "java(tuple.get(StoreConfig.PENDING.createdAt))")
+  @Mapping(target = "memo", expression = "java(tuple.get(StoreConfig.PENDING.memo))")
   @Mapping(target = "products", ignore = true)
   TeamPending toDto(Tuple tuple);
 
@@ -45,13 +41,13 @@ public interface TbTeamPendingMapper {
   @Mapping(target = "fromPlaceId", expression = "java(entity.getFromPlace().getId())")
   TeamPendingProd toInfoDto(TbTeamPendingProd entity);
 
-  @Mapping(target = "id", expression = "java(tuple.get(PROD.id))")
-  @Mapping(target = "quantity", expression = "java(tuple.get(PROD.quantity))")
-  @Mapping(target = "productId", expression = "java(tuple.get(PROD.product.id))")
-  @Mapping(target = "toPlaceId", expression = "java(tuple.get(PROD.toPlace.id))")
-  @Mapping(target = "toQuantity", expression = "java(tuple.get(PROD.toQuantity))")
-  @Mapping(target = "fromPlaceId", expression = "java(tuple.get(PROD.fromPlace.id))")
-  @Mapping(target = "fromQuantity", expression = "java(tuple.get(PROD.fromQuantity))")
+  @Mapping(target = "id", expression = "java(tuple.get(StoreConfig.PENDING_PROD.id))")
+  @Mapping(target = "quantity", expression = "java(tuple.get(StoreConfig.PENDING_PROD.quantity))")
+  @Mapping(target = "productId", expression = "java(tuple.get(StoreConfig.PENDING_PROD.product.id))")
+  @Mapping(target = "toPlaceId", expression = "java(tuple.get(StoreConfig.PENDING_PROD.toPlace.id))")
+  @Mapping(target = "toQuantity", expression = "java(tuple.get(StoreConfig.PENDING_PROD.toQuantity))")
+  @Mapping(target = "fromPlaceId", expression = "java(tuple.get(StoreConfig.PENDING_PROD.fromPlace.id))")
+  @Mapping(target = "fromQuantity", expression = "java(tuple.get(StoreConfig.PENDING_PROD.fromQuantity))")
   TeamPendingProd toInfoDto(Tuple tuple);
 
 }
