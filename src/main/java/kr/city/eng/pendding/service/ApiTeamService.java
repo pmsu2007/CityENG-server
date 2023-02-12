@@ -3,8 +3,6 @@ package kr.city.eng.pendding.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +11,11 @@ import kr.city.eng.pendding.dto.TeamDto;
 import kr.city.eng.pendding.store.entity.TbUser;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
 import kr.city.eng.pendding.store.entity.team.TbTeamRole;
+import kr.city.eng.pendding.store.entity.team.TbTeamUser;
 import kr.city.eng.pendding.store.mapper.TbTeamMapper;
 import kr.city.eng.pendding.store.repo.TbTeamRepo;
 import kr.city.eng.pendding.store.repo.TbTeamRoleRepo;
+import kr.city.eng.pendding.store.repo.TbTeamUserRepo;
 import kr.city.eng.pendding.store.repo.TbUserRepo;
 import kr.city.eng.pendding.util.AppUtil;
 import kr.city.eng.pendding.util.ExceptionUtil;
@@ -30,6 +30,7 @@ public class ApiTeamService {
 
   private final TbTeamRoleRepo storeRole;
   private final TbUserRepo storeUser;
+  private final TbTeamUserRepo storeTeamUser;
 
   private TbTeam findByIdOrThrow(Long id) {
     return store.findById(id)
@@ -43,14 +44,9 @@ public class ApiTeamService {
 
   @Transactional
   public List<Team> getEntities() {
-    return store.findAll().stream()
-        .map(mapper::toDto)
+    TbUser user = findUserOrThrow(AppUtil.getAuthUser());
+    return storeTeamUser.findByUser(user).stream().map(it -> mapper.toDto(it.getTeam()))
         .collect(Collectors.toList());
-  }
-
-  @Transactional
-  public Page<Team> getTeamsWithPage(Pageable pageable) {
-    return store.findAll(pageable).map(mapper::toDto);
   }
 
   @Transactional
@@ -61,20 +57,31 @@ public class ApiTeamService {
   @Transactional
   public Team createOrThrow(TeamDto dto) {
     TbTeam entity = mapper.toEntity(dto);
-    entity.setUser(findUserOrThrow(AppUtil.getAuthUser()));
+    TbUser user = findUserOrThrow(AppUtil.getAuthUser());
+    entity.setUser(user);
     entity = store.save(entity);
-    createRoleOrThrow(entity);
+    TbTeamRole role = createTeamRoleOrThrow(entity);
+    createTeamUserOrThrow(entity, role, user);
     return mapper.toDto(entity);
   }
 
-  private void createRoleOrThrow(TbTeam team) {
-    TbTeamRole entity = TbTeamRole.admin();
+  private TbTeamRole createTeamRoleOrThrow(TbTeam team) {
+    TbTeamRole entity = TbTeamRole.member();
     entity.setTeam(team);
     storeRole.save(entity);
 
-    entity = TbTeamRole.member();
+    entity = TbTeamRole.admin();
     entity.setTeam(team);
     storeRole.save(entity);
+    return entity;
+  }
+
+  private void createTeamUserOrThrow(TbTeam team, TbTeamRole role, TbUser user) {
+    TbTeamUser entity = new TbTeamUser();
+    entity.setTeam(team);
+    entity.setTeamRole(role);
+    entity.setUser(user);
+    storeTeamUser.save(entity);
   }
 
   @Transactional

@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
@@ -28,6 +30,12 @@ public class MockTeamService extends MockService {
     });
   }
 
+  private List<Team> convertList(MvcResult result) throws Exception {
+    String json = result.getResponse().getContentAsString();
+    return getData(json, new TypeReference<List<Team>>() {
+    });
+  }
+
   public TeamDto create() {
     TeamDto dto = new TeamDto();
     dto.setName("Team-" + RandomStringUtils.randomAlphabetic(2));
@@ -44,6 +52,14 @@ public class MockTeamService extends MockService {
         .andReturn();
 
     return convertDto(result);
+  }
+
+  public List<Team> getAll() throws Exception {
+    MvcResult result = mockMvc.perform(apiGet("/teams"))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andReturn();
+    return convertList(result);
   }
 
   public Team getById(Long id) throws Exception {

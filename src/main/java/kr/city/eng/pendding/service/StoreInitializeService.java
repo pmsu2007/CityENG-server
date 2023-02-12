@@ -22,8 +22,12 @@ import com.google.common.io.Files;
 import kr.city.eng.pendding.store.entity.TbUser;
 import kr.city.eng.pendding.store.entity.enums.UserRole;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
+import kr.city.eng.pendding.store.entity.team.TbTeamRole;
+import kr.city.eng.pendding.store.entity.team.TbTeamUser;
 import kr.city.eng.pendding.store.repo.TbSystemRepo;
 import kr.city.eng.pendding.store.repo.TbTeamRepo;
+import kr.city.eng.pendding.store.repo.TbTeamRoleRepo;
+import kr.city.eng.pendding.store.repo.TbTeamUserRepo;
 import kr.city.eng.pendding.store.repo.TbUserRepo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -64,6 +68,8 @@ public class StoreInitializeService {
   private final TbSystemRepo storeSystem;
   private final TbUserRepo storeUser;
   private final TbTeamRepo storeTeam;
+  private final TbTeamRoleRepo storeTeamRole;
+  private final TbTeamUserRepo storeTeamUser;
 
   @SuppressWarnings("squid:S2229")
   public void checkSchema() {
@@ -125,7 +131,26 @@ public class StoreInitializeService {
       team.setCreatedAt(System.currentTimeMillis());
       team.setUpdatedAt(System.currentTimeMillis());
       storeTeam.save(team);
+
+      TbTeamRole role = checkAdminTeamRole(team);
+      TbTeamUser teamUser = new TbTeamUser();
+      teamUser.setTeam(team);
+      teamUser.setTeamRole(role);
+      teamUser.setUser(admin);
+      storeTeamUser.save(teamUser);
     }
+  }
+
+  @Transactional
+  public TbTeamRole checkAdminTeamRole(TbTeam team) {
+    TbTeamRole adminRole = TbTeamRole.admin();
+    adminRole.setTeam(team);
+    storeTeamRole.save(adminRole);
+
+    TbTeamRole memberRole = TbTeamRole.member();
+    memberRole.setTeam(team);
+    storeTeamRole.save(memberRole);
+    return adminRole;
   }
 
   @Transactional

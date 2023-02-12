@@ -79,6 +79,16 @@ public class ApiTeamControllerTest {
 
   @Test
   @WithMockUser(username = "admin", roles = { "ADMIN" })
+  public void getAll() throws Exception {
+    Team dto = mockService.add(mockService.create());
+
+    List<Team> result = mockService.getAll();
+    assertEquals(1, result.size());
+    assertEquals(dto, result.get(0));
+  }
+
+  @Test
+  @WithMockUser(username = "admin", roles = { "ADMIN" })
   public void getById() throws Exception {
     Team dto = mockService.add(mockService.create());
 
