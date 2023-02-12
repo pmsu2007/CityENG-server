@@ -27,7 +27,8 @@ public class AppUtil {
     if (details instanceof UserDetails) {
       return ((UserDetails) details).getUsername();
     }
-    return null;
+    // FIXME: 실제 유정정보를 활용해야 함.
+    return "admin";
   }
 
 }

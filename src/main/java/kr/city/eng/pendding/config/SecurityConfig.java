@@ -40,6 +40,9 @@ public class SecurityConfig implements WebMvcConfigurer {
       requests.anyRequest().permitAll();
     });
 
+    // basic 인증 허용
+    http.httpBasic();
+
     // 세션관리 안함.
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
