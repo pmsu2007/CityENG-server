@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 public enum TeamPermission {
   ROLE("R"),
   PRODUCT("P"),
+  PLACE("PL"),
   ATTRIBUTE("A"),
   PENDING_IN("PI"),
   PENDING_OUT("PO"),
@@ -33,7 +34,7 @@ public enum TeamPermission {
   }
 
   public static Set<TeamPermission> admin() {
-    return Sets.newHashSet(ROLE, PRODUCT, ATTRIBUTE,
+    return Sets.newHashSet(ROLE, PRODUCT, PLACE, ATTRIBUTE,
         PENDING_IN, PENDING_OUT, PENDING_ADJUST, PENDING_MOVE);
   }
 
