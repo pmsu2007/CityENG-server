@@ -46,8 +46,8 @@ public class MockTeamAttrService extends MockService {
   public TeamAttrDto create(int index) {
     TeamAttrDto dto = new TeamAttrDto();
     dto.setIndex(index);
-    dto.setType(AttrType.STRING);
-    dto.setName("TeamAttr:" + AttrType.STRING);
+    // dto.setType(AttrType.NUMBER);
+    dto.setName("TeamAttr:" + AttrType.NUMBER);
     return dto;
   }
 

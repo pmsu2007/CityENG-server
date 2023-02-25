@@ -107,6 +107,9 @@ public class TestStoreInitialize {
 
   @Transactional
   public void clearAll() {
+    storeTeamProdAttr.deleteAllInBatch();
+    storeTeamProdPlace.deleteAllInBatch();
+    storeTeamProduct.deleteAllInBatch();
     storeTeam.deleteAllInBatch();
     storeUser.deleteAllInBatch();
   }

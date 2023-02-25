@@ -62,7 +62,10 @@ public interface TbTeamProductMapper {
   }
 
   default void setTeamProdAttr(Tuple tuple, TeamProduct dto) {
-    dto.addAttribute(tuple.get(StoreConfig.PROD_ATTR.id), tuple.get(StoreConfig.PROD_ATTR.attrValue));
+    dto.addAttribute(
+        tuple.get(StoreConfig.PROD_ATTR.attribute.id),
+        tuple.get(StoreConfig.PROD_ATTR.attribute.name),
+        tuple.get(StoreConfig.PROD_ATTR.attrValue));
   }
 
   default void setTeamProdPlace(Tuple tuple, Map<Long, TeamProduct> map) {
@@ -74,7 +77,10 @@ public interface TbTeamProductMapper {
   }
 
   default void setTeamProdPlace(Tuple tuple, TeamProduct dto) {
-    dto.addPlace(tuple.get(StoreConfig.PROD_PLACE.id), tuple.get(StoreConfig.PROD_PLACE.quantity));
+    dto.addPlace(
+        tuple.get(StoreConfig.PROD_PLACE.place.id),
+        tuple.get(StoreConfig.PROD_PLACE.place.name),
+        tuple.get(StoreConfig.PROD_PLACE.quantity));
   }
 
 }

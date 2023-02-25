@@ -22,6 +22,7 @@ public class TeamProductDto implements AppDto {
   public static class Place implements Comparable<Place> {
     @EqualsAndHashCode.Include
     private Long id;
+    private String name;
     private int quantity;
 
     public boolean validate() {
@@ -40,6 +41,7 @@ public class TeamProductDto implements AppDto {
   public static class Attr implements Comparable<Attr> {
     @EqualsAndHashCode.Include
     private Long id;
+    private String name;
     private String value;
 
     public boolean validate() {
@@ -87,12 +89,12 @@ public class TeamProductDto implements AppDto {
       throw ExceptionUtil.require("name , barcode or attributes");
   }
 
-  public void addPlace(Long id, int quantity) {
-    this.places.add(new Place(id, quantity));
+  public void addPlace(Long id, String name, int quantity) {
+    this.places.add(new Place(id, name, quantity));
   }
 
-  public void addAttribute(Long id, String value) {
-    this.attributes.add(new Attr(id, value));
+  public void addAttribute(Long id, String name, String value) {
+    this.attributes.add(new Attr(id, name, value));
   }
 
   public void sorted() {

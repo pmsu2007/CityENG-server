@@ -126,14 +126,20 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
   }
 
   private JPAQuery<Tuple> getTeamProdAttrQuery(Set<Long> ids) {
-    QTuple select = Projections.tuple(tbTeamProdAttr.product.id, tbTeamProdAttr.id, tbTeamProdAttr.attrValue);
+    QTuple select = Projections.tuple(tbTeamProdAttr.product.id,
+        tbTeamProdAttr.attribute.id, 
+        tbTeamProdAttr.attribute.name, 
+        tbTeamProdAttr.attrValue);
     return queryFactory.select(select)
         .from(tbTeamProdAttr)
         .where(tbTeamProdAttr.product.id.in(ids));
   }
 
   private JPAQuery<Tuple> getTeamProdPlaceQuery(Set<Long> ids) {
-    QTuple select = Projections.tuple(tbTeamProdPlace.product.id, tbTeamProdPlace.id, tbTeamProdPlace.quantity);
+    QTuple select = Projections.tuple(tbTeamProdPlace.product.id,
+        tbTeamProdPlace.place.id,
+        tbTeamProdPlace.place.name,
+        tbTeamProdPlace.quantity);
     return queryFactory.select(select)
         .from(tbTeamProdPlace)
         .where(tbTeamProdPlace.product.id.in(ids));

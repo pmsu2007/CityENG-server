@@ -68,10 +68,10 @@ public class ApiTeamProductControllerTest {
   private TeamProductDto getTeamProductDto() {
     TeamProductDto addDto = mockService.create();
     this.teamEntity.getTeamPlaces().forEach(it -> {
-      addDto.addPlace(it.getId(), RandomUtils.nextInt(10));
+      addDto.addPlace(it.getId(), it.getName(), RandomUtils.nextInt(10));
     });
     this.teamEntity.getTeamAttributes().forEach(it -> {
-      addDto.addAttribute(it.getId(), "value:" + RandomUtils.nextInt(50));
+      addDto.addAttribute(it.getId(), it.getName(), "value:" + RandomUtils.nextInt(50));
     });
     return addDto;
   }
@@ -116,7 +116,7 @@ public class ApiTeamProductControllerTest {
     // 수정된 내용만 서버 전송
     TeamProduct newDto = new TeamProduct();
     newDto.setName(dto.getName());
-    newDto.addAttribute(attr.getId(), attr.getValue());
+    newDto.addAttribute(attr.getId(), attr.getName(), attr.getValue());
 
     TeamProduct result = mockService.update(dto.getId(), newDto);
 
