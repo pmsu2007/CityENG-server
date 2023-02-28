@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.util.ObjectUtils;
 
+import com.google.common.collect.Lists;
+
 import kr.city.eng.pendding.store.entity.enums.PendingType;
 import kr.city.eng.pendding.util.ExceptionUtil;
 import lombok.Data;
@@ -18,7 +20,8 @@ public class TeamPending implements AppDto {
   private Long createdAt;
   private String memo;
 
-  private @Delegate List<TeamPendingProd> products;
+  @Delegate
+  private List<TeamPendingProd> products = Lists.newArrayList();
 
   @Override
   public void validate() {
