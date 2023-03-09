@@ -1,6 +1,7 @@
 package kr.city.eng.pendding.store.repo;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,6 +13,8 @@ import kr.city.eng.pendding.store.entity.team.TbTeamProdPlace;
 public interface TbTeamProdPlaceRepo extends JpaRepository<TbTeamProdPlace, Long> {
 
   Collection<TbTeamProdPlace> findByProductId(Long productId);
+
+  Optional<TbTeamProdPlace> findByProductIdAndPlaceId(Long productId, Long placeId);
 
   @Modifying(clearAutomatically = true)
   @Query("delete from TbTeamProdPlace t where t.place.id=:id")

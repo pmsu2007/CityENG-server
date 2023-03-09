@@ -14,11 +14,13 @@ import kr.city.eng.pendding.store.entity.team.TbTeam;
 import kr.city.eng.pendding.store.entity.team.TbTeamPending;
 import kr.city.eng.pendding.store.entity.team.TbTeamPendingProd;
 import kr.city.eng.pendding.store.entity.team.TbTeamPlace;
+import kr.city.eng.pendding.store.entity.team.TbTeamProdPlace;
 import kr.city.eng.pendding.store.entity.team.TbTeamProduct;
 import kr.city.eng.pendding.store.mapper.TbTeamPendingMapper;
 import kr.city.eng.pendding.store.repo.TbTeamPendingProdRepo;
 import kr.city.eng.pendding.store.repo.TbTeamPendingRepo;
 import kr.city.eng.pendding.store.repo.TbTeamPlaceRepo;
+import kr.city.eng.pendding.store.repo.TbTeamProdPlaceRepo;
 import kr.city.eng.pendding.store.repo.TbTeamProductRepo;
 import kr.city.eng.pendding.store.repo.TbTeamRepo;
 import kr.city.eng.pendding.store.repo.TbUserRepo;
@@ -32,6 +34,7 @@ public class ApiTeamPendingService {
 
   private final TbTeamPendingRepo store;
   private final TbTeamPendingProdRepo storeHist;
+  private final TbTeamProdPlaceRepo storeProdPlace;
 
   private final TbTeamRepo storeTeam;
   private final TbUserRepo storeUser;
@@ -84,7 +87,7 @@ public class ApiTeamPendingService {
   @Transactional
   public TeamPending setPendingType(Long teamId, TeamPending dto) {
     TbTeamPending entity = saveTeamPendingOrThrow(teamId, dto);
-    dto.getProducts().forEach(it -> saveTeamPendingProductOrThrow(entity, it));
+    dto.forEach(it -> saveTeamPendingProductOrThrow(entity, it));
     return dto;
   }
 
@@ -103,15 +106,59 @@ public class ApiTeamPendingService {
   private void saveTeamPendingProductOrThrow(TbTeamPending pending, TeamPendingProd hist) {
     TbTeamPendingProd entity = mapper.toInfoEntity(hist);
     entity.setPending(pending);
-    entity.setProduct(findTeamProductOrThrow(hist.getProductId()));
-    entity.setToPlace(findTeamPlaceOrThrow(hist.getToPlaceId()));
-    if (hist.isPlaceEquals()) {
-      entity.setFromPlace(entity.getToPlace());
-    } else {
-      entity.setFromPlace(findTeamPlaceOrThrow(hist.getFromPlaceId()));
+    TbTeamPlace toPlace = findTeamPlaceOrThrow(hist.getToPlaceId());
+    TbTeamPlace fromPlace = toPlace;
+    if (!hist.isPlaceEquals()) {
+      fromPlace = findTeamPlaceOrThrow(hist.getFromPlaceId());
     }
+    entity.setProduct(findTeamProductOrThrow(hist.getProductId()));
+    entity.setToPlace(toPlace);
+    entity.setFromPlace(fromPlace);
+
+    saveTeamProdcutPlace(entity, pending.getType(), hist);
     storeHist.save(entity);
     hist.setId(entity.getId());
+  }
+
+  private void saveTeamProdcutPlace(TbTeamPendingProd pending,
+      PendingType type, TeamPendingProd hist) {
+    TbTeamProduct product = pending.getProduct();
+    TbTeamPlace toPlace = pending.getToPlace();
+    if (type.equals(PendingType.MOVE)) {
+      TbTeamPlace toFrom = pending.getFromPlace();
+      saveTeamProdcutPlaceMove(product.getId(), toFrom.getId(), toPlace.getId(), hist);
+    } else {
+      saveTeamProdcutPlace(product.getId(), toPlace.getId(), hist, type);
+    }
+  }
+
+  private void saveTeamProdcutPlace(Long productId, Long placeId, TeamPendingProd hist, PendingType type) {
+    TbTeamProdPlace entity = storeProdPlace
+        .findByProductIdAndPlaceId(productId, placeId)
+        .orElseThrow();
+    int quantity = entity.getQuantity();
+    hist.setFromQuantity(quantity);
+    hist.setToQuantity(quantity);
+    entity.setQuantity(hist.adjustToQuantity(type, quantity));
+    storeProdPlace.save(entity);
+  }
+
+  private void saveTeamProdcutPlaceMove(Long productId, Long fromPlaceId, Long toPlaceId, TeamPendingProd hist) {
+    TbTeamProdPlace entity = storeProdPlace
+        .findByProductIdAndPlaceId(productId, fromPlaceId)
+        .orElseThrow();
+    int quantity = entity.getQuantity();
+    hist.setFromQuantity(quantity);
+    entity.setQuantity(quantity - hist.getQuantity());
+    storeProdPlace.save(entity);
+
+    entity = storeProdPlace
+        .findByProductIdAndPlaceId(productId, toPlaceId)
+        .orElseThrow();
+    quantity = entity.getQuantity();
+    hist.setToQuantity(quantity);
+    entity.setQuantity(quantity + hist.getQuantity());
+    storeProdPlace.save(entity);
   }
 
   @Transactional

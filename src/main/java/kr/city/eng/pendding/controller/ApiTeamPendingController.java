@@ -51,7 +51,6 @@ public class ApiTeamPendingController {
 
   @PostMapping(value = "/{teamId}/pending", produces = MediaType.APPLICATION_JSON_VALUE)
   public TeamPending setPendingType(@PathVariable Long teamId, @RequestBody TeamPending dto) {
-    dto.setId(null);
     dto.validate();
     return service.setPendingType(teamId, dto);
   }

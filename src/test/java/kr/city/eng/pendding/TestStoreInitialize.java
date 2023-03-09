@@ -18,6 +18,7 @@ import kr.city.eng.pendding.store.entity.team.TbTeamProdAttr;
 import kr.city.eng.pendding.store.entity.team.TbTeamProdPlace;
 import kr.city.eng.pendding.store.entity.team.TbTeamProduct;
 import kr.city.eng.pendding.store.repo.TbTeamAttrRepo;
+import kr.city.eng.pendding.store.repo.TbTeamPendingProdRepo;
 import kr.city.eng.pendding.store.repo.TbTeamPlaceRepo;
 import kr.city.eng.pendding.store.repo.TbTeamProdAttrRepo;
 import kr.city.eng.pendding.store.repo.TbTeamProdPlaceRepo;
@@ -43,6 +44,8 @@ public class TestStoreInitialize {
   TbTeamProdPlaceRepo storeTeamProdPlace;
   @Autowired
   TbTeamProdAttrRepo storeTeamProdAttr;
+  @Autowired
+  TbTeamPendingProdRepo storeHist;
 
   @Transactional
   public TbUser initAdminUser() {
@@ -107,6 +110,8 @@ public class TestStoreInitialize {
 
   @Transactional
   public void clearAll() {
+    storeHist.deleteAllInBatch();
+
     storeTeamProdAttr.deleteAllInBatch();
     storeTeamProdPlace.deleteAllInBatch();
     storeTeamProduct.deleteAllInBatch();
