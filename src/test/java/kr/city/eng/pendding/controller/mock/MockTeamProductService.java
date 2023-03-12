@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import kr.city.eng.pendding.dto.TeamProduct;
 import kr.city.eng.pendding.dto.TeamProductDto;
+import kr.city.eng.pendding.dto.TeamProductDto.Place;
 
 public class MockTeamProductService extends MockService {
 
@@ -70,6 +71,16 @@ public class MockTeamProductService extends MockService {
         .andExpect(jsonPath("$.id", is(notNullValue())))
         .andReturn();
     return convertDto(result);
+  }
+
+  public Place getByIdAndPlaceId(Long id, Long placeId) throws Exception {
+    MvcResult result = mockMvc.perform(apiGet("/products/{id}/places/{placeId}", id, placeId))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andReturn();
+    String json = result.getResponse().getContentAsString();
+    return getData(json, new TypeReference<Place>() {
+    });
   }
 
   public TeamProduct update(Long id, TeamProductDto dto) throws Exception {

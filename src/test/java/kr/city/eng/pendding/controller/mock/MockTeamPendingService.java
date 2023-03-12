@@ -30,11 +30,26 @@ public class MockTeamPendingService extends MockService {
     String content = mapper.writeValueAsString(dto);
 
     MvcResult result = mockMvc.perform(apiPost("/{teamId}/pending", teamId).content(content))
-        // .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(notNullValue())))
         .andReturn();
     return convertDto(result);
+  }
+
+  public TeamPending getById(Long id) throws Exception {
+    MvcResult result = mockMvc.perform(apiGet("/pendings/{id}", id))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(notNullValue())))
+        .andReturn();
+    return convertDto(result);
+  }
+
+  public void delete(Long id) throws Exception {
+    mockMvc.perform(apiDel("/pendings/{id}", id))
+        .andExpect(status().isNoContent())
+        .andReturn();
   }
 
 }

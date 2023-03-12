@@ -2,8 +2,6 @@ package kr.city.eng.pendding.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
-
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,10 +26,8 @@ import kr.city.eng.pendding.dto.TeamProductDto;
 import kr.city.eng.pendding.dto.TeamProductDto.Place;
 import kr.city.eng.pendding.store.entity.enums.PendingType;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
-import kr.city.eng.pendding.store.entity.team.TbTeamPendingProd;
-import kr.city.eng.pendding.store.entity.team.TbTeamProdPlace;
 import kr.city.eng.pendding.store.repo.TbTeamPendingProdRepo;
-import kr.city.eng.pendding.store.repo.TbTeamProdPlaceRepo;
+import kr.city.eng.pendding.store.repo.TbTeamPendingRepo;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -48,9 +44,9 @@ public class ApiTeamPendingControllerTest {
   ApiTeamProductController productController;
 
   @Autowired
-  TbTeamPendingProdRepo storeHist;
+  TbTeamPendingRepo store;
   @Autowired
-  TbTeamProdPlaceRepo storeProdPlace;
+  TbTeamPendingProdRepo storeHist;
 
   private TbTeam teamEntity;
   private MockMvc mockMvc;
@@ -100,7 +96,7 @@ public class ApiTeamPendingControllerTest {
 
   private TeamPending getTeamPendingMove(Long productId, Place fromPlace, Place toPlace) {
     TeamPending dto = new TeamPending();
-    dto.setType(PendingType.IN);
+    dto.setType(PendingType.MOVE);
     dto.setCreatedAt(System.currentTimeMillis());
 
     TeamPendingProd prodDto = new TeamPendingProd();
@@ -115,26 +111,6 @@ public class ApiTeamPendingControllerTest {
     return dto;
   }
 
-  private void assertPendingDto(TeamPending expected, TeamPending actual) {
-    assertEquals(expected.getCreatedAt(), actual.getCreatedAt());
-    assertEquals(expected.getProducts().size(), actual.getProducts().size());
-
-    int size = expected.size();
-    for (int i = 0; i < size; i++) {
-      assertEquals(expected.get(i).getProductId(), actual.get(i).getProductId());
-      assertEquals(expected.get(i).getQuantity(), actual.get(i).getQuantity());
-      assertEquals(expected.get(i).getFromPlaceId(), actual.get(i).getFromPlaceId());
-      assertEquals(expected.get(i).getToPlaceId(), actual.get(i).getToPlaceId());
-    }
-  }
-
-  private void assertPendingResult(TeamPendingProd pending, TbTeamPendingProd histProd) {
-    assertEquals(pending.getProductId(), histProd.getProduct().getId());
-    assertEquals(pending.getFromPlaceId(), histProd.getFromPlace().getId());
-    assertEquals(pending.getToPlaceId(), histProd.getToPlace().getId());
-    assertEquals(pending.getQuantity(), histProd.getQuantity());
-  }
-
   @Test
   @WithMockUser(username = "admin", roles = { "ADMIN" })
   public void pendingIn() throws Exception {
@@ -144,21 +120,19 @@ public class ApiTeamPendingControllerTest {
     TeamPending dto = getTeamPendingIn(product.getId(), place);
 
     TeamPending result = mockService.pending(teamId, dto);
+    // 히스토리 확인
+    TeamPending expected = mockService.getById(result.getId());
+    assertEquals(expected, result);
+
+    // 제품이 맞는지 확인
+    assertEquals(1, result.size());
     TeamPendingProd pending = result.get(0);
-    assertPendingDto(dto, result);
+    assertEquals(product.getId(), pending.getProductId());
 
-    // TbTeamProdPlace에 있는지 확인
-    TbTeamProdPlace prodPlace = storeProdPlace
-        .findByProductIdAndPlaceId(pending.getProductId(), pending.getToPlaceId())
-        .orElseThrow();
-
-    int expected = pending.adjustToQuantity(PendingType.IN, pending.getFromQuantity());
-    assertEquals(expected, prodPlace.getQuantity());
-
-    // 히스토리에 있는지 확인
-    List<TbTeamPendingProd> hists = storeHist.findAll();
-    assertEquals(1, hists.size());
-    assertPendingResult(pending, hists.get(0));
+    // toPlace에 있는지 확인
+    Place prodToPlace = mockProduct.getByIdAndPlaceId(pending.getProductId(), pending.getToPlaceId());
+    int toQuantity = pending.adjustToQuantity(PendingType.IN, pending.getToQuantity());
+    assertEquals(toQuantity, prodToPlace.getQuantity());
   }
 
   @Test
@@ -172,55 +146,50 @@ public class ApiTeamPendingControllerTest {
 
     // 입고
     inDto = mockService.pending(teamId, inDto);
+    assertEquals(product.getId(), inDto.getId());
     fromPlace.setQuantity(fromPlace.getQuantity() + inDto.get(0).getQuantity());
 
     // 이동
     TeamPending dto = getTeamPendingMove(product.getId(), fromPlace, toPlace);
     TeamPending result = mockService.pending(teamId, dto);
+    // 히스토리 확인
+    TeamPending expected = mockService.getById(result.getId());
+    assertEquals(expected, result);
+
+    // 제품이 맞는지 확인
+    assertEquals(1, result.size());
     TeamPendingProd pending = result.get(0);
-    assertPendingDto(dto, result);
+    assertEquals(product.getId(), pending.getProductId());
 
     // toPlace에 있는지 확인
-    TbTeamProdPlace prodToPlace = storeProdPlace
-        .findByProductIdAndPlaceId(pending.getProductId(), pending.getToPlaceId())
-        .orElseThrow();
-    int expected = pending.adjustToQuantity(PendingType.IN, pending.getFromQuantity());
-    assertEquals(expected, prodToPlace.getQuantity());
+    Place prodToPlace = mockProduct.getByIdAndPlaceId(pending.getProductId(), pending.getToPlaceId());
+    int toQuantity = pending.adjustToQuantity(PendingType.IN, pending.getToQuantity());
+    assertEquals(toQuantity, prodToPlace.getQuantity());
 
     // fromPlace에 있는지 확인
-    TbTeamProdPlace prodFromPlace = storeProdPlace
-        .findByProductIdAndPlaceId(pending.getProductId(), pending.getToPlaceId())
-        .orElseThrow();
-    expected = pending.adjustToQuantity(PendingType.OUT, pending.getFromQuantity());
-    assertEquals(expected, prodFromPlace.getQuantity());
-
-    // 히스토리에 있는지 확인
-    List<TbTeamPendingProd> hists = storeHist.findAll();
-    assertEquals(2, hists.size());
-  }
-
-  @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
-  public void getAll() throws Exception {
-    Long teamId = this.teamEntity.getId();
-    TeamProduct dto = mockProduct.add(teamId, getTeamProductDto());
-
-  }
-
-  @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
-  public void getById() throws Exception {
-    Long teamId = this.teamEntity.getId();
-    TeamProduct dto = mockProduct.add(teamId, getTeamProductDto());
-
+    Place prodFromPlace = mockProduct.getByIdAndPlaceId(pending.getProductId(), pending.getFromPlaceId());
+    int fromQuantity = pending.adjustToQuantity(PendingType.OUT, pending.getFromQuantity());
+    assertEquals(fromQuantity, prodFromPlace.getQuantity());
   }
 
   @Test
   @WithMockUser(username = "admin", roles = { "ADMIN" })
   public void delete() throws Exception {
     Long teamId = this.teamEntity.getId();
-    TeamProduct dto = mockProduct.add(teamId, getTeamProductDto());
+    TeamProduct product = mockProduct.add(teamId, getTeamProductDto());
+    Place place = product.getPlaces().get(0);
+    TeamPending dto = getTeamPendingIn(product.getId(), place);
 
+    TeamPending result = mockService.pending(teamId, dto);
+    // 히스토리 확인
+    TeamPending expected = mockService.getById(result.getId());
+    assertEquals(expected, result);
+
+    // 삭제
+    mockService.delete(result.getId());
+
+    assertEquals(0, storeHist.count());
+    assertEquals(0, store.count());
   }
 
 }
