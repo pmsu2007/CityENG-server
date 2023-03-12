@@ -6,11 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import kr.city.eng.pendding.dto.TeamProduct;
+import kr.city.eng.pendding.dto.TeamProductDto.Place;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
 
 public interface TbTeamProductCustom {
 
   Optional<TeamProduct> findDtoById(Long id);
+
+  Optional<Place> findProductPlaceBy(Long productId, Long placeId);
 
   Page<TeamProduct> findDtoByTeam(TbTeam team, Pageable pageable);
 

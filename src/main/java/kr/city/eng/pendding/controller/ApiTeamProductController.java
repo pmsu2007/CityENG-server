@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.city.eng.pendding.dto.TeamProduct;
 import kr.city.eng.pendding.dto.TeamProductDto;
+import kr.city.eng.pendding.dto.TeamProductDto.Place;
 import kr.city.eng.pendding.service.ApiTeamProductService;
 import lombok.RequiredArgsConstructor;
 
@@ -45,6 +46,11 @@ public class ApiTeamProductController {
   @GetMapping(value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public TeamProduct getTeamProduct(@PathVariable Long id) {
     return service.getOrThrow(id);
+  }
+
+  @GetMapping(value = "/products/{id}/places/{placeId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public Place getTeamProductPlace(@PathVariable Long id, @PathVariable Long placeId) {
+    return service.getTeamProductPlaceOrThrow(id, placeId);
   }
 
   @PatchMapping(value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

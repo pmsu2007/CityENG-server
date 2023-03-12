@@ -26,6 +26,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import kr.city.eng.pendding.dto.TeamProduct;
+import kr.city.eng.pendding.dto.TeamProductDto.Place;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
 import kr.city.eng.pendding.store.mapper.TbTeamProductMapper;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,14 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
   @Transactional(readOnly = true)
   public Optional<TeamProduct> findDtoById(Long id) {
     return getDtoById(id);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Optional<Place> findProductPlaceBy(Long productId, Long placeId) {
+    return getTeamProdPlaceQuery(productId, placeId).fetch()
+        .stream().map(mapper::toTeamProdPlace)
+        .findFirst();
   }
 
   @Override
@@ -127,8 +136,8 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
 
   private JPAQuery<Tuple> getTeamProdAttrQuery(Set<Long> ids) {
     QTuple select = Projections.tuple(tbTeamProdAttr.product.id,
-        tbTeamProdAttr.attribute.id, 
-        tbTeamProdAttr.attribute.name, 
+        tbTeamProdAttr.attribute.id,
+        tbTeamProdAttr.attribute.name,
         tbTeamProdAttr.attrValue);
     return queryFactory.select(select)
         .from(tbTeamProdAttr)
@@ -143,6 +152,17 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
     return queryFactory.select(select)
         .from(tbTeamProdPlace)
         .where(tbTeamProdPlace.product.id.in(ids));
+  }
+
+  private JPAQuery<Tuple> getTeamProdPlaceQuery(Long productId, Long placeId) {
+    QTuple select = Projections.tuple(tbTeamProdPlace.product.id,
+        tbTeamProdPlace.place.id,
+        tbTeamProdPlace.place.name,
+        tbTeamProdPlace.quantity);
+    return queryFactory.select(select)
+        .from(tbTeamProdPlace)
+        .where(tbTeamProdPlace.product.id.eq(productId))
+        .where(tbTeamProdPlace.place.id.eq(placeId));
   }
 
 }

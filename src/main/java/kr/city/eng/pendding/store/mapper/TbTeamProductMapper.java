@@ -10,6 +10,7 @@ import com.querydsl.core.Tuple;
 
 import kr.city.eng.pendding.dto.TeamProduct;
 import kr.city.eng.pendding.dto.TeamProductDto;
+import kr.city.eng.pendding.dto.TeamProductDto.Place;
 import kr.city.eng.pendding.store.StoreConfig;
 import kr.city.eng.pendding.store.entity.team.TbTeamProduct;
 
@@ -83,4 +84,10 @@ public interface TbTeamProductMapper {
         tuple.get(StoreConfig.PROD_PLACE.quantity));
   }
 
+  default Place toTeamProdPlace(Tuple tuple) {
+    return new Place(
+        tuple.get(StoreConfig.PROD_PLACE.place.id),
+        tuple.get(StoreConfig.PROD_PLACE.place.name),
+        tuple.get(StoreConfig.PROD_PLACE.quantity));
+  }
 }

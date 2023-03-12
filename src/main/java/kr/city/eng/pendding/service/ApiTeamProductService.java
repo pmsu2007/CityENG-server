@@ -92,6 +92,10 @@ public class ApiTeamProductService {
         .orElseThrow(() -> ExceptionUtil.id(id, TbTeamProduct.class.getName()));
   }
 
+  public Place getTeamProductPlaceOrThrow(Long productId, Long placeId) {
+    return store.findProductPlaceBy(productId, placeId).orElseThrow();
+  }
+
   @Transactional
   public TeamProduct patchOrThrow(Long id, TeamProductDto team) {
     TbTeamProduct entity = findByIdOrThrow(id);
