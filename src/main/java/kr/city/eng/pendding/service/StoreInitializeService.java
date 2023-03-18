@@ -29,6 +29,7 @@ import kr.city.eng.pendding.store.repo.TbTeamRepo;
 import kr.city.eng.pendding.store.repo.TbTeamRoleRepo;
 import kr.city.eng.pendding.store.repo.TbTeamUserRepo;
 import kr.city.eng.pendding.store.repo.TbUserRepo;
+import kr.city.eng.pendding.util.AppUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -104,10 +105,12 @@ public class StoreInitializeService {
   }
 
   @Transactional
+  @SuppressWarnings("squid:S6437")
   public void checkAdminUser() {
-    TbUser admin = storeUser.findById("admin").orElseGet(() -> {
+    String userId = "admin";
+    TbUser admin = storeUser.findById(userId).orElseGet(() -> {
       TbUser user = new TbUser();
-      user.setId("admin");
+      user.setId(userId);
       user.setPassword(passwordEncoder.encode("admin"));
       user.setRole(UserRole.ADMIN);
       user.setName("Administrator");
@@ -115,6 +118,7 @@ public class StoreInitializeService {
       user.setSystem(true);
       user.setCreatedAt(System.currentTimeMillis());
       user.setUpdatedAt(System.currentTimeMillis());
+      user.setApikey(AppUtil.genApiKey(userId, UserRole.ADMIN));
       return storeUser.save(user);
     });
     checkAdminTeam(admin);

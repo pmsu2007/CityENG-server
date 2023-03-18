@@ -11,10 +11,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import kr.city.eng.pendding.config.secure.JwtTokenProvider;
+import kr.city.eng.pendding.config.secure.WebAuthenticationJwtFilter;
+import kr.city.eng.pendding.store.entity.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig implements WebMvcConfigurer {
 
   private final ApplicationContext context;
+  private final JwtTokenProvider jwtTokenProvider;
 
   @Bean
   public BCryptPasswordEncoder passwordEncoder() {
@@ -37,11 +42,17 @@ public class SecurityConfig implements WebMvcConfigurer {
       // h2-console 무시
       requests.antMatchers("/h2-console/**").permitAll();
 
-      requests.anyRequest().permitAll();
+      requests.antMatchers("/login").permitAll();
+      requests.antMatchers("/api/users").hasRole(UserRole.ADMIN.name());
+
+      requests.anyRequest().fullyAuthenticated();
     });
 
     // basic 인증 허용
     http.httpBasic();
+
+    WebAuthenticationJwtFilter jwtFilter = new WebAuthenticationJwtFilter(jwtTokenProvider);
+    http.addFilterAfter(jwtFilter, BasicAuthenticationFilter.class);
 
     // 세션관리 안함.
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

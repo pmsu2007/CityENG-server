@@ -33,6 +33,8 @@ public class ApiUserController {
     return Collections.singletonMap("result", result);
   }
 
+  // TODO: 로그인 서비스 만들어야 함.
+
   @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
   public List<User> getUsers() {
     return service.getEntities();

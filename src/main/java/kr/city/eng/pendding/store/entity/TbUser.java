@@ -42,4 +42,7 @@ public class TbUser extends TbDateEntity {
   @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
   private List<TbTeam> teams;
 
+  @Column(nullable = false)
+  private String apikey;
+
 }

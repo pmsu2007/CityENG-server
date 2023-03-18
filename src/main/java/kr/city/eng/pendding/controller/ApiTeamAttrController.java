@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.city.eng.pendding.dto.TeamAttr;
 import kr.city.eng.pendding.dto.TeamAttrDto;
 import kr.city.eng.pendding.service.ApiTeamAttrService;
+import kr.city.eng.pendding.service.ApiTeamPermission;
+import kr.city.eng.pendding.store.entity.enums.TeamPermission;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,12 +31,28 @@ import lombok.RequiredArgsConstructor;
 public class ApiTeamAttrController {
 
   private final ApiTeamAttrService service;
+  private final ApiTeamPermission teamPermission;
 
   @PostMapping(value = "/{teamId}/attr", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.CREATED)
   public TeamAttr createTeamAttr(@PathVariable Long teamId, @RequestBody TeamAttrDto dto) {
+    teamPermission.verify(teamId, TeamPermission.ATTRIBUTE);
     dto.validate();
     return service.createOrThrow(teamId, dto);
+  }
+
+  @PutMapping(value = "/attrs/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public TeamAttr updateTeamAttr(@PathVariable Long id, @RequestBody TeamAttrDto dto) {
+    // TODO: teamId 추가해야 함.
+    dto.validate();
+    return service.updateOrThrow(id, dto);
+  }
+
+  @DeleteMapping(value = "/attrs/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(code = HttpStatus.NO_CONTENT)
+  public void deleteTeamAttr(@PathVariable Long id) {
+    // TODO: teamId 추가해야 함.
+    service.deleteOrThrow(id);
   }
 
   @GetMapping(value = "/{teamId}/attrs", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -50,18 +68,6 @@ public class ApiTeamAttrController {
   @GetMapping(value = "/attrs/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public TeamAttr getTeamAttr(@PathVariable Long id) {
     return service.getOrThrow(id);
-  }
-
-  @PutMapping(value = "/attrs/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public TeamAttr updateTeamAttr(@PathVariable Long id, @RequestBody TeamAttrDto dto) {
-    dto.validate();
-    return service.updateOrThrow(id, dto);
-  }
-
-  @DeleteMapping(value = "/attrs/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(code = HttpStatus.NO_CONTENT)
-  public void deleteTeamAttr(@PathVariable Long id) {
-    service.deleteOrThrow(id);
   }
 
   @GetMapping(value = "/attrs/{id}/values", produces = MediaType.APPLICATION_JSON_VALUE)

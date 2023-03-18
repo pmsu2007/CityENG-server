@@ -14,6 +14,7 @@ import kr.city.eng.pendding.dto.User;
 import kr.city.eng.pendding.dto.UserDto;
 import kr.city.eng.pendding.dto.UserPassword;
 import kr.city.eng.pendding.store.entity.TbUser;
+import kr.city.eng.pendding.store.entity.enums.UserRole;
 import kr.city.eng.pendding.store.mapper.TbTeamMapper;
 import kr.city.eng.pendding.store.mapper.TbUserMapper;
 import kr.city.eng.pendding.store.repo.TbUserRepo;
@@ -53,6 +54,7 @@ public class ApiUserService {
   public User createOrThrow(UserDto dto) {
     TbUser entity = mapper.toEntity(dto);
     entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+    entity.setApikey(AppUtil.genApiKey(dto.getId(), UserRole.USER));
     return mapper.toDto(store.save(entity));
   }
 
