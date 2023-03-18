@@ -26,6 +26,7 @@ import kr.city.eng.pendding.dto.TeamProductDto;
 import kr.city.eng.pendding.dto.TeamProductDto.Place;
 import kr.city.eng.pendding.store.entity.enums.PendingType;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
+import kr.city.eng.pendding.store.entity.team.TbTeamPlace;
 import kr.city.eng.pendding.store.repo.TbTeamPendingProdRepo;
 import kr.city.eng.pendding.store.repo.TbTeamPendingRepo;
 
@@ -68,9 +69,9 @@ public class ApiTeamPendingControllerTest {
 
   private TeamProductDto getTeamProductDto() {
     TeamProductDto addDto = mockProduct.create();
-    this.teamEntity.getTeamPlaces().forEach(it -> {
-      addDto.addPlace(it.getId(), it.getName(), RandomUtils.nextInt(10));
-    });
+    // 장소는 1개만 입력
+    TbTeamPlace place = this.teamEntity.getTeamPlaces().get(0);
+    addDto.addPlace(place.getId(), place.getName(), RandomUtils.nextInt(10));
     this.teamEntity.getTeamAttributes().forEach(it -> {
       addDto.addAttribute(it.getId(), it.getName(), "value:" + RandomUtils.nextInt(50));
     });
@@ -116,7 +117,11 @@ public class ApiTeamPendingControllerTest {
   public void pendingIn() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamProduct product = mockProduct.add(teamId, getTeamProductDto());
-    Place place = product.getPlaces().get(0);
+
+    // 장소는 초기에 입력되지 않은 곳으로 지정
+    TbTeamPlace teamPlace = this.teamEntity.getTeamPlaces().get(1);
+    Place place = new Place(teamPlace.getId(), teamPlace.getName(), 0);
+
     TeamPending dto = getTeamPendingIn(product.getId(), place);
 
     TeamPending result = mockService.pending(teamId, dto);
@@ -141,13 +146,10 @@ public class ApiTeamPendingControllerTest {
     Long teamId = this.teamEntity.getId();
     TeamProduct product = mockProduct.add(teamId, getTeamProductDto());
     Place fromPlace = product.getPlaces().get(0);
-    Place toPlace = product.getPlaces().get(1);
-    TeamPending inDto = getTeamPendingIn(product.getId(), fromPlace);
 
-    // 입고
-    inDto = mockService.pending(teamId, inDto);
-    assertEquals(product.getId(), inDto.getId());
-    fromPlace.setQuantity(fromPlace.getQuantity() + inDto.get(0).getQuantity());
+    // 이동 장소는 초기에 입력되지 않은 곳으로 지정
+    TbTeamPlace teamPlace = this.teamEntity.getTeamPlaces().get(1);
+    Place toPlace = new Place(teamPlace.getId(), teamPlace.getName(), 0);
 
     // 이동
     TeamPending dto = getTeamPendingMove(product.getId(), fromPlace, toPlace);

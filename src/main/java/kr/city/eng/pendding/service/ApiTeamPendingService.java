@@ -125,17 +125,26 @@ public class ApiTeamPendingService {
     TbTeamProduct product = pending.getProduct();
     TbTeamPlace toPlace = pending.getToPlace();
     if (type.equals(PendingType.MOVE)) {
-      TbTeamPlace toFrom = pending.getFromPlace();
-      saveTeamProdcutPlaceMove(product.getId(), toFrom.getId(), toPlace.getId(), hist);
+      TbTeamPlace fromPlace = pending.getFromPlace();
+      saveTeamProdcutPlaceMove(product, fromPlace, toPlace, hist);
     } else {
-      saveTeamProdcutPlace(product.getId(), toPlace.getId(), hist, type);
+      saveTeamProdcutPlace(product, toPlace, hist, type);
     }
   }
 
-  private void saveTeamProdcutPlace(Long productId, Long placeId, TeamPendingProd hist, PendingType type) {
-    TbTeamProdPlace entity = storeProdPlace
-        .findByProductIdAndPlaceId(productId, placeId)
-        .orElseThrow();
+  private TbTeamProdPlace getTbTeamProdPlace(TbTeamProduct product, TbTeamPlace place) {
+    return storeProdPlace
+        .findByProductIdAndPlaceId(product.getId(), place.getId())
+        .orElseGet(() -> {
+          TbTeamProdPlace newPlace = new TbTeamProdPlace();
+          newPlace.setProduct(product);
+          newPlace.setPlace(place);
+          return newPlace;
+        });
+  }
+
+  private void saveTeamProdcutPlace(TbTeamProduct product, TbTeamPlace place, TeamPendingProd hist, PendingType type) {
+    TbTeamProdPlace entity = getTbTeamProdPlace(product, place);
     int quantity = entity.getQuantity();
     hist.setFromQuantity(quantity);
     hist.setToQuantity(quantity);
@@ -143,18 +152,15 @@ public class ApiTeamPendingService {
     storeProdPlace.save(entity);
   }
 
-  private void saveTeamProdcutPlaceMove(Long productId, Long fromPlaceId, Long toPlaceId, TeamPendingProd hist) {
-    TbTeamProdPlace entity = storeProdPlace
-        .findByProductIdAndPlaceId(productId, fromPlaceId)
-        .orElseThrow();
+  private void saveTeamProdcutPlaceMove(TbTeamProduct product, TbTeamPlace fromPlace, TbTeamPlace toPlace,
+      TeamPendingProd hist) {
+    TbTeamProdPlace entity = getTbTeamProdPlace(product, fromPlace);
     int quantity = entity.getQuantity();
     hist.setFromQuantity(quantity);
     entity.setQuantity(quantity - hist.getQuantity());
     storeProdPlace.save(entity);
 
-    entity = storeProdPlace
-        .findByProductIdAndPlaceId(productId, toPlaceId)
-        .orElseThrow();
+    entity = getTbTeamProdPlace(product, toPlace);
     quantity = entity.getQuantity();
     hist.setToQuantity(quantity);
     entity.setQuantity(quantity + hist.getQuantity());
