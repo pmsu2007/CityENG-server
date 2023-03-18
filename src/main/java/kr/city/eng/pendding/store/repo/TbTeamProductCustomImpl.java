@@ -112,9 +112,9 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
           .on(tbTeamProdAttr.product.id.eq(tbTeamProduct.id))
           .distinct();
 
-      query.where(tbTeamProduct.barcode.likeIgnoreCase(value)
-          .or(tbTeamProduct.name.likeIgnoreCase(value))
-          .or(tbTeamProdAttr.attrValue.likeIgnoreCase(value)));
+      query.where(tbTeamProduct.barcode.containsIgnoreCase(value)
+          .or(tbTeamProduct.name.containsIgnoreCase(value))
+          .or(tbTeamProdAttr.attrValue.containsIgnoreCase(value)));
     }
     if (pageable != null) {
       query.offset(pageable.getOffset()) // 페이지 번호
