@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 public class ApiUserController {
 
   private final ApiUserService service;
@@ -33,33 +33,38 @@ public class ApiUserController {
     return Collections.singletonMap("result", result);
   }
 
-  @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+  public List<User> getUsers() {
+    return service.getEntities();
+  }
+
+  @GetMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
   public User getUser() {
     return service.getOrThrow();
   }
 
-  @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.CREATED)
   public User createUser(@RequestBody UserDto dto) {
     dto.validate();
     return service.createOrThrow(dto);
   }
 
-  @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PutMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
   public User updateUser(@RequestBody UserDto dto) {
     dto.validateUpdate();
     // 현재 접속한 유저정보로 확인
     return service.updateOrThrow(dto);
   }
 
-  @DeleteMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.NO_CONTENT)
   public void deleteUser() {
     // 현재 접속한 유저정보로 확인
     service.deleteOrThrow();
   }
 
-  @PutMapping(value = "/password", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PutMapping(value = "/user/password", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.NO_CONTENT)
   public void resetPassword(@RequestBody UserPassword model) {
     model.validate();
@@ -67,17 +72,17 @@ public class ApiUserController {
     service.resetPassword(model);
   }
 
-  @GetMapping(value = "/exist-id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/user/exist-id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public Object existById(@PathVariable String id) {
     return responseResult(service.existId(id));
   }
 
-  @GetMapping(value = "/exist-email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/user/exist-email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
   public Object existByEmail(@PathVariable String email) {
     return responseResult(service.existEmail(email));
   }
 
-  @GetMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/user/teams", produces = MediaType.APPLICATION_JSON_VALUE)
   public List<TeamInfo> getTeamInfos() {
     return service.getTeams();
   }

@@ -37,6 +37,13 @@ public class ApiUserService {
   }
 
   @Transactional
+  public List<User> getEntities() {
+    return store.findAll().stream()
+        .map(mapper::toDto)
+        .collect(Collectors.toList());
+  }
+
+  @Transactional
   public User getOrThrow() {
     TbUser user = findUserOrThrow(AppUtil.getAuthUser());
     return mapper.toDto(user);
