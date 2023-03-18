@@ -42,8 +42,8 @@ public class SecurityConfig implements WebMvcConfigurer {
       // h2-console 무시
       requests.antMatchers("/h2-console/**").permitAll();
 
-      requests.antMatchers("/login").permitAll();
-      requests.antMatchers("/api/users").hasRole(UserRole.ADMIN.name());
+      requests.antMatchers("/api/signin").permitAll();
+      requests.antMatchers("/api/users").hasAuthority(UserRole.ADMIN.name());
 
       requests.anyRequest().fullyAuthenticated();
     });

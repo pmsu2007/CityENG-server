@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import kr.city.eng.pendding.dto.TeamInfo;
 import kr.city.eng.pendding.dto.User;
 import kr.city.eng.pendding.dto.UserDto;
 import kr.city.eng.pendding.dto.UserPassword;
+import kr.city.eng.pendding.dto.UserSign;
 import kr.city.eng.pendding.store.entity.TbUser;
 import kr.city.eng.pendding.store.entity.enums.UserRole;
 import kr.city.eng.pendding.store.mapper.TbTeamMapper;
@@ -42,6 +44,15 @@ public class ApiUserService {
     return store.findAll().stream()
         .map(mapper::toDto)
         .collect(Collectors.toList());
+  }
+
+  @Transactional
+  public String signIn(UserSign dto) {
+    TbUser user = findUserOrThrow(dto.getUsername());
+    if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+      throw new BadCredentialsException("Bad credentials");
+    }
+    return user.getApikey();
   }
 
   @Transactional

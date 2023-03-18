@@ -19,6 +19,7 @@ import kr.city.eng.pendding.dto.TeamInfo;
 import kr.city.eng.pendding.dto.User;
 import kr.city.eng.pendding.dto.UserDto;
 import kr.city.eng.pendding.dto.UserPassword;
+import kr.city.eng.pendding.dto.UserSign;
 import kr.city.eng.pendding.service.ApiUserService;
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +34,10 @@ public class ApiUserController {
     return Collections.singletonMap("result", result);
   }
 
-  // TODO: 로그인 서비스 만들어야 함.
+  @PostMapping(value = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)
+  public String signIn(@RequestBody UserSign dto) {
+    return service.signIn(dto);
+  }
 
   @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
   public List<User> getUsers() {

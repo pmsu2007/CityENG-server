@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AppUtil {
 
-  private static SecretKey jwtSecret = Keys.hmacShaKeyFor("$city@E&G$".getBytes());
+  private static SecretKey jwtSecret = Keys.hmacShaKeyFor("qkrqjawlsdml$city@E&G$todtjdwkwjswjdgkrqkralstn".getBytes());
 
   public static SecretKey jwt() {
     return jwtSecret;
@@ -44,7 +44,7 @@ public class AppUtil {
     if (details instanceof UserDetails) {
       return ((UserDetails) details).getUsername();
     }
-    return null;
+    return details != null ? details.toString() : null;
   }
 
   public static String genApiKey(String username, UserRole role) {
