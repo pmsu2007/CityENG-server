@@ -20,6 +20,7 @@ public class ApiTeamPermission {
 
   private final TbTeamUserRepo store;
 
+  // row: teamId, col: userId, value: permissions
   private Table<Long, String, Set<TeamPermission>> caches = HashBasedTable.create();
 
   public void verify(Long teamId, TeamPermission permission) {
@@ -31,12 +32,16 @@ public class ApiTeamPermission {
     }
   }
 
+  public void add(Long teamId, String userId, Set<TeamPermission> permission) {
+    caches.put(teamId, userId, permission);
+  }
+
   private Set<TeamPermission> getTeamPermissions(Long teamId, String userId) {
     final Set<TeamPermission> permission = Sets.newHashSet();
     if (!caches.contains(teamId, userId)) {
       store.findByTeamAndUser(teamId, userId).ifPresent(entity -> {
         permission.addAll(entity.getTeamRole().getPermissions());
-        caches.put(teamId, userId, permission);
+        add(teamId, userId, permission);
       });
     } else {
       permission.addAll(caches.get(teamId, userId));

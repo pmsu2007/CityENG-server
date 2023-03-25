@@ -10,7 +10,10 @@ import lombok.ToString;
 public class TeamRole extends TeamRoleDto {
 
   private Long id;
+
+  @EqualsAndHashCode.Exclude
   private Long createdAt;
+  @EqualsAndHashCode.Exclude
   private Long updatedAt;
 
 }

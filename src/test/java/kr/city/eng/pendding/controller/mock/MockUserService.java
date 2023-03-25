@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -19,6 +20,7 @@ import kr.city.eng.pendding.dto.TeamInfo;
 import kr.city.eng.pendding.dto.User;
 import kr.city.eng.pendding.dto.UserDto;
 import kr.city.eng.pendding.dto.UserPassword;
+import kr.city.eng.pendding.dto.UserSign;
 import kr.city.eng.pendding.store.entity.enums.AuthType;
 
 public class MockUserService extends MockService {
@@ -32,6 +34,20 @@ public class MockUserService extends MockService {
     String json = result.getResponse().getContentAsString();
     return getData(json, new TypeReference<User>() {
     });
+  }
+
+  public String signIn(UserSign user) throws Exception {
+    String content = mapper.writeValueAsString(user);
+
+    String json = mockMvc.perform(
+        MockMvcRequestBuilders.post("/api/signin")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .accept(MediaType.APPLICATION_JSON_VALUE).content(content))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andReturn().getResponse().getContentAsString();
+    return getData(json, new TypeReference<Map<String, String>>() {
+    }).get("apikey");
   }
 
   public UserDto create(String userId) {
@@ -55,6 +71,20 @@ public class MockUserService extends MockService {
     return convertUser(result);
   }
 
+  public List<User> getAll() throws Exception {
+    MvcResult result = mockMvc.perform(
+        MockMvcRequestBuilders.get("/api/users")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andReturn();
+
+    String json = result.getResponse().getContentAsString();
+    return getData(json, new TypeReference<List<User>>() {
+    });
+  }
+
   public User getById() throws Exception {
     MvcResult result = mockMvc.perform(apiGet(""))
         .andExpect(status().isOk())
@@ -75,7 +105,7 @@ public class MockUserService extends MockService {
     return convertUser(result);
   }
 
-  public void delete(String id) throws Exception {
+  public void delete() throws Exception {
     mockMvc.perform(apiDel(""))
         .andExpect(status().isNoContent())
         .andReturn();

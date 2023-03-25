@@ -61,6 +61,23 @@ public class MockTeamPlaceService extends MockService {
     return convertDto(result);
   }
 
+  public TeamPlace update(Long teamId, Long id, TeamPlaceDto dto) throws Exception {
+    String content = mapper.writeValueAsString(dto);
+
+    MvcResult result = mockMvc.perform(apiPut("/{teamId}/places/{id}", teamId, id).content(content))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(notNullValue())))
+        .andReturn();
+    return convertDto(result);
+  }
+
+  public void delete(Long teamId, Long id) throws Exception {
+    mockMvc.perform(apiDel("/{teamId}/places/{id}", teamId, id))
+        .andExpect(status().isNoContent())
+        .andReturn();
+  }
+
   public List<TeamPlace> getAll(Long teamId) throws Exception {
     MvcResult result = mockMvc.perform(apiGet("/{teamId}/places", teamId))
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -84,23 +101,6 @@ public class MockTeamPlaceService extends MockService {
         .andExpect(jsonPath("$.id", is(notNullValue())))
         .andReturn();
     return convertDto(result);
-  }
-
-  public TeamPlace update(Long id, TeamPlaceDto dto) throws Exception {
-    String content = mapper.writeValueAsString(dto);
-
-    MvcResult result = mockMvc.perform(apiPut("/places/{id}", id).content(content))
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(notNullValue())))
-        .andReturn();
-    return convertDto(result);
-  }
-
-  public void delete(Long id) throws Exception {
-    mockMvc.perform(apiDel("/places/{id}", id))
-        .andExpect(status().isNoContent())
-        .andReturn();
   }
 
 }

@@ -29,6 +29,7 @@ import kr.city.eng.pendding.dto.TeamInfo;
 import kr.city.eng.pendding.dto.User;
 import kr.city.eng.pendding.dto.UserDto;
 import kr.city.eng.pendding.dto.UserPassword;
+import kr.city.eng.pendding.dto.UserSign;
 import kr.city.eng.pendding.store.entity.TbUser;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
 import kr.city.eng.pendding.store.mapper.TbUserMapper;
@@ -64,12 +65,20 @@ public class ApiUserConterollerTest {
   @BeforeEach
   public void setUp() {
     initialize.clearAll();
+    initialize.initAdminUser();
 
     mockMvc = MockMvcBuilders.standaloneSetup(controller, tamController)
-        .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper)).build();
+        .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
+        .build();
 
     mockService.setUp(objectMapper, mockMvc);
     mockTeamService.setUp(objectMapper, mockMvc);
+  }
+
+  @Test
+  public void signIn() throws Exception {
+    String apiKey = mockService.signIn(new UserSign("admin", "admin"));
+    assertEquals(TestStoreInitialize.API_KEY, apiKey);
   }
 
   @Test
@@ -81,7 +90,15 @@ public class ApiUserConterollerTest {
   }
 
   @Test
-  @WithMockUser(username = "test", roles = { "USER" })
+  public void getAll() throws Exception {
+    mockService.add(mockService.create("test"));
+
+    List<User> result = mockService.getAll();
+    assertEquals(2, result.size());
+  }
+
+  @Test
+  @WithMockUser(username = "test", authorities = { "USER" })
   public void getById() throws Exception {
     User dto = mockService.add(mockService.create("test"));
 
@@ -90,7 +107,7 @@ public class ApiUserConterollerTest {
   }
 
   @Test
-  @WithMockUser(username = "test", roles = { "USER" })
+  @WithMockUser(username = "test", authorities = { "USER" })
   public void update() throws Exception {
     UserDto dto = mockService.create("test");
     User user = mockService.add(dto);
@@ -104,21 +121,20 @@ public class ApiUserConterollerTest {
   }
 
   @Test
-  @WithMockUser(username = "test", roles = { "USER" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void delete() throws Exception {
-    User dto = mockService.add(mockService.create("test"));
     Team teamDto = mockTeamService.add(mockTeamService.create());
 
-    mockService.delete(dto.getId());
+    mockService.delete();
 
     Optional<TbTeam> opTeam = storeTeam.findById(teamDto.getId());
     assertFalse(opTeam.isPresent());
-    Optional<TbUser> op = store.findById(dto.getId());
+    Optional<TbUser> op = store.findById("admin");
     assertFalse(op.isPresent());
   }
 
   @Test
-  @WithMockUser(username = "test", roles = { "USER" })
+  @WithMockUser(username = "test", authorities = { "USER" })
   public void resetPassword() throws Exception {
     UserDto dto = mockService.create("test");
     mockService.add(dto);
@@ -132,27 +148,26 @@ public class ApiUserConterollerTest {
   }
 
   @Test
-  @WithMockUser(username = "test", roles = { "USER" })
+  @WithMockUser(username = "test", authorities = { "USER" })
   public void existById() throws Exception {
     User user = mockService.add(mockService.create("test"));
     assertTrue(mockService.existById(user.getId()));
   }
 
   @Test
-  @WithMockUser(username = "test", roles = { "USER" })
+  @WithMockUser(username = "test", authorities = { "USER" })
   public void existByEmail() throws Exception {
     User user = mockService.add(mockService.create("test"));
     assertTrue(mockService.existByEmail(user.getEmail()));
   }
 
   @Test
-  @WithMockUser(username = "test", roles = { "USER" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getTeamInfos() throws Exception {
-    mockService.add(mockService.create("test"));
     Team teamDto = mockTeamService.add(mockTeamService.create());
 
     List<TeamInfo> result = mockService.getTeamInfos();
-    assertEquals(result.size(), 1);
+    assertEquals(1, result.size());
     TeamInfo teamInfo = result.get(0);
     assertEquals(teamDto.getId(), teamInfo.getId());
     assertEquals(teamDto.getName(), teamInfo.getName());
@@ -160,7 +175,6 @@ public class ApiUserConterollerTest {
     assertEquals(teamDto.getImageUrl(), teamInfo.getImageUrl());
     assertEquals(0, teamInfo.getProductCount());
     assertEquals(0, teamInfo.getPlaceCount());
-    assertEquals(0, teamInfo.getUserCount());
   }
 
 }

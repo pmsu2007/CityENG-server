@@ -62,7 +62,7 @@ public class ApiTeamPlaceControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void create() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamPlace dto = mockService.add(teamId, mockService.create());
@@ -72,7 +72,7 @@ public class ApiTeamPlaceControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getAll() throws Exception {
     Long teamId = this.teamEntity.getId();
     List<TeamPlace> lists = Lists.newArrayList();
@@ -85,7 +85,7 @@ public class ApiTeamPlaceControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getPage() throws Exception {
     Long teamId = this.teamEntity.getId();
     List<TeamPlace> lists = Lists.newArrayList();
@@ -105,7 +105,7 @@ public class ApiTeamPlaceControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getById() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamPlace dto = mockService.add(teamId, mockService.create());
@@ -115,22 +115,22 @@ public class ApiTeamPlaceControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void update() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamPlace dto = mockService.add(teamId, mockService.create());
 
-    TeamPlace result = mockService.update(dto.getId(), dto);
+    TeamPlace result = mockService.update(teamId, dto.getId(), dto);
     assertEquals(dto, result);
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void delete() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamPlace dto = mockService.add(teamId, mockService.create());
 
-    mockService.delete(dto.getId());
+    mockService.delete(teamId, dto.getId());
 
     Optional<TbTeamPlace> op = store.findById(dto.getId());
     assertFalse(op.isPresent());

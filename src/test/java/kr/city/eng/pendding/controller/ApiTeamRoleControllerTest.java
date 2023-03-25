@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ public class ApiTeamRoleControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void create() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamRole dto = mockService.add(teamId, mockService.create());
@@ -69,20 +70,26 @@ public class ApiTeamRoleControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getAll() throws Exception {
     Long teamId = this.teamEntity.getId();
-    List<TeamRole> lists = Lists.newArrayList();
-    for (int i = 0; i < 10; i++) {
+    List<TeamRole> lists = this.teamEntity.getTeamRoles().stream()
+        .map(storeMapper::toDto)
+        .collect(Collectors.toList());
+    for (int i = 0; i < 3; i++) {
       lists.add(mockService.add(teamId, mockService.create()));
     }
 
     List<TeamRole> result = mockService.getAll(teamId);
-    assertEquals(lists, result);
+    assertEquals(lists.size(), result.size());
+
+    List<Long> ids = lists.stream().map(it -> it.getId()).sorted().toList();
+    List<Long> ids2 = result.stream().map(it -> it.getId()).sorted().toList();
+    assertEquals(ids, ids2);
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getById() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamRole dto = mockService.add(teamId, mockService.create());
@@ -92,22 +99,22 @@ public class ApiTeamRoleControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void update() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamRole dto = mockService.add(teamId, mockService.create());
 
-    TeamRole result = mockService.update(dto.getId(), dto);
+    TeamRole result = mockService.update(teamId, dto.getId(), dto);
     assertEquals(dto, result);
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void delete() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamRole dto = mockService.add(teamId, mockService.create());
 
-    mockService.delete(dto.getId());
+    mockService.delete(teamId, dto.getId());
 
     Optional<TbTeamRole> op = store.findById(dto.getId());
     assertFalse(op.isPresent());

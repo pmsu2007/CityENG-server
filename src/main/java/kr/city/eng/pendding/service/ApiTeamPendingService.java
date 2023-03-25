@@ -42,6 +42,7 @@ public class ApiTeamPendingService {
   private final TbTeamProductRepo storeTeamProduct;
 
   private final TbTeamPendingMapper mapper;
+  private final ApiTeamPermission teamPermission;
 
   private TbTeamPending findByIdOrThrow(Long id) {
     return store.findById(id)
@@ -168,8 +169,11 @@ public class ApiTeamPendingService {
   }
 
   @Transactional
-  public void deleteOrThrow(Long id) {
+  public void deleteOrThrow(Long teamId, Long id) {
     TbTeamPending entity = findByIdOrThrow(id);
+    teamPermission.verify(teamId,
+        entity.getType().toTeamPermission());
+
     storeHist.deleteByPending(entity);
     store.delete(entity);
   }

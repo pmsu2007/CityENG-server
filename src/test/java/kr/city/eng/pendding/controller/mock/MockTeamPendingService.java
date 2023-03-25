@@ -37,6 +37,12 @@ public class MockTeamPendingService extends MockService {
     return convertDto(result);
   }
 
+  public void delete(Long teamId, Long id) throws Exception {
+    mockMvc.perform(apiDel("/{teamId}/pendings/{id}", teamId, id))
+        .andExpect(status().isNoContent())
+        .andReturn();
+  }
+
   public TeamPending getById(Long id) throws Exception {
     MvcResult result = mockMvc.perform(apiGet("/pendings/{id}", id))
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -44,12 +50,6 @@ public class MockTeamPendingService extends MockService {
         .andExpect(jsonPath("$.id", is(notNullValue())))
         .andReturn();
     return convertDto(result);
-  }
-
-  public void delete(Long id) throws Exception {
-    mockMvc.perform(apiDel("/pendings/{id}", id))
-        .andExpect(status().isNoContent())
-        .andReturn();
   }
 
 }

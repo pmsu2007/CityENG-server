@@ -37,17 +37,18 @@ public class ApiTeamRoleController {
     return service.createOrThrow(teamId, dto);
   }
 
-  @PutMapping(value = "/roles/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public TeamRole updateTeamPlace(@PathVariable Long id, @RequestBody TeamRoleDto dto) {
-    // TODO: teamId 추가해야 함.
+  @PutMapping(value = "/{teamId}/roles/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public TeamRole updateTeamPlace(@PathVariable Long teamId,
+      @PathVariable Long id, @RequestBody TeamRoleDto dto) {
+    teamPermission.verify(teamId, TeamPermission.ROLE);
     dto.validate();
     return service.updateOrThrow(id, dto);
   }
 
-  @DeleteMapping(value = "/roles/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(value = "/{teamId}/roles/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.NO_CONTENT)
-  public void deleteTeamPlace(@PathVariable Long id) {
-    // TODO: teamId 추가해야 함.
+  public void deleteTeamPlace(@PathVariable Long teamId, @PathVariable Long id) {
+    teamPermission.verify(teamId, TeamPermission.ROLE);
     service.deleteOrThrow(id);
   }
 

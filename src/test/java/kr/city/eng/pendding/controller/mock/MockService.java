@@ -21,14 +21,22 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import kr.city.eng.pendding.TestStoreInitialize;
+
 public abstract class MockService {
 
   protected ObjectMapper mapper;
   protected MockMvc mockMvc;
+  protected String apiKey;
 
   public void setUp(ObjectMapper mapper, MockMvc mockMvc) {
+    setUp(mapper, mockMvc, TestStoreInitialize.API_KEY);
+  }
+
+  public void setUp(ObjectMapper mapper, MockMvc mockMvc, String apiKey) {
     this.mapper = mapper;
     this.mockMvc = mockMvc;
+    this.apiKey = apiKey;
   }
 
   public abstract String getUrl(String url);
@@ -41,24 +49,28 @@ public abstract class MockService {
 
   protected MockHttpServletRequestBuilder apiPost(String url, Object... parameter) {
     return MockMvcRequestBuilders.post(getUrl(url), parameter)
+        .header("Authorization", "Bearer " + this.apiKey)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .accept(MediaType.APPLICATION_JSON_VALUE);
   }
 
   protected MockHttpServletRequestBuilder apiPut(String url, Object... parameter) {
     return MockMvcRequestBuilders.put(getUrl(url), parameter)
+        .header("Authorization", "Bearer " + this.apiKey)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .accept(MediaType.APPLICATION_JSON_VALUE);
   }
 
   protected MockHttpServletRequestBuilder apiPatch(String url, Object... parameter) {
     return MockMvcRequestBuilders.patch(getUrl(url), parameter)
+        .header("Authorization", "Bearer " + this.apiKey)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .accept(MediaType.APPLICATION_JSON_VALUE);
   }
 
   protected MockHttpServletRequestBuilder apiDel(String url, Object... parameter) {
     return MockMvcRequestBuilders.delete(getUrl(url), parameter)
+        .header("Authorization", "Bearer " + this.apiKey)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .accept(MediaType.APPLICATION_JSON_VALUE);
   }

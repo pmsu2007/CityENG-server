@@ -62,7 +62,7 @@ public class ApiTeamAttrControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void create() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamAttr dto = mockService.add(teamId, mockService.create(0));
@@ -72,7 +72,7 @@ public class ApiTeamAttrControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getAll() throws Exception {
     Long teamId = this.teamEntity.getId();
     List<TeamAttr> lists = Lists.newArrayList();
@@ -85,7 +85,7 @@ public class ApiTeamAttrControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getPage() throws Exception {
     Long teamId = this.teamEntity.getId();
     List<TeamAttr> lists = Lists.newArrayList();
@@ -105,7 +105,7 @@ public class ApiTeamAttrControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getById() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamAttr dto = mockService.add(teamId, mockService.create(0));
@@ -115,24 +115,24 @@ public class ApiTeamAttrControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void update() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamAttr dto = mockService.add(teamId, mockService.create(0));
 
-    dto.setName(null);
+    dto.setName("no name");
 
-    TeamAttr result = mockService.update(dto.getId(), dto);
+    TeamAttr result = mockService.update(teamId, dto.getId(), dto);
     assertEquals(dto, result);
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void delete() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamAttr dto = mockService.add(teamId, mockService.create(0));
 
-    mockService.delete(dto.getId());
+    mockService.delete(teamId, dto.getId());
 
     Optional<TbTeamAttr> op = store.findById(dto.getId());
     assertFalse(op.isPresent());

@@ -8,11 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import kr.city.eng.pendding.store.entity.TbUser;
+import kr.city.eng.pendding.store.entity.team.TbTeam;
 import kr.city.eng.pendding.store.entity.team.TbTeamUser;
 
 public interface TbTeamUserRepo extends JpaRepository<TbTeamUser, Long> {
 
+  List<TbTeamUser> findByTeam(TbTeam team);
+
   List<TbTeamUser> findByUser(TbUser user);
+
+  void deleteByTeam(TbTeam team);
 
   @Query(value = "select t from TbTeamUser t where t.team.id = :teamId and t.user.id = :userId")
   Optional<TbTeamUser> findByTeamAndUser(

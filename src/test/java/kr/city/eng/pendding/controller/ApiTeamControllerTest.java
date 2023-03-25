@@ -64,7 +64,7 @@ public class ApiTeamControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void create() throws Exception {
     Team dto = mockService.add(mockService.create());
 
@@ -78,7 +78,7 @@ public class ApiTeamControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getAll() throws Exception {
     Team dto = mockService.add(mockService.create());
 
@@ -88,7 +88,7 @@ public class ApiTeamControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getById() throws Exception {
     Team dto = mockService.add(mockService.create());
 
@@ -97,7 +97,7 @@ public class ApiTeamControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void update() throws Exception {
     Team dto = mockService.add(mockService.create());
 
@@ -106,7 +106,7 @@ public class ApiTeamControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void delete() throws Exception {
     Team dto = mockService.add(mockService.create());
 
@@ -114,7 +114,7 @@ public class ApiTeamControllerTest {
 
     Optional<TbTeam> op = store.findById(dto.getId());
     assertFalse(op.isPresent());
-    // role은 자동생값이 있으므로 삭제시 같이 삭제되는지 확인
+    // role은 자동생성값이 있으므로 삭제시 같이 삭제되는지 확인
     assertEquals(0, storeRole.count());
   }
 

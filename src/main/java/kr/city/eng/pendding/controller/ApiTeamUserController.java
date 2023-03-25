@@ -16,19 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import kr.city.eng.pendding.dto.Team;
-import kr.city.eng.pendding.dto.TeamDto;
-import kr.city.eng.pendding.service.ApiTeamService;
+import kr.city.eng.pendding.dto.TeamUser;
+import kr.city.eng.pendding.service.ApiTeamUserService;
 import kr.city.eng.pendding.store.entity.enums.UserRole;
 import kr.city.eng.pendding.util.AppUtil;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/")
-public class ApiTeamController {
+@RequestMapping("/api/teams/{teamId}")
+public class ApiTeamUserController {
 
-  private final ApiTeamService service;
+  private final ApiTeamUserService service;
 
   private void verifyRole() {
     Authentication user = AppUtil.getCurrentAuthentication();
@@ -39,36 +38,35 @@ public class ApiTeamController {
     }
   }
 
-  @PostMapping(value = "/team", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.CREATED)
-  public Team createTeam(@RequestBody TeamDto dto) {
+  public TeamUser createTeamUser(@PathVariable Long teamId,
+      @RequestBody TeamUser dto) {
     verifyRole();
     dto.validate();
-    return service.createOrThrow(dto);
+    return service.createTeamUserOrThrow(teamId, dto);
   }
 
-  @GetMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
-  public List<Team> getTeams() {
-    return service.getEntities();
-  }
-
-  @GetMapping(value = "/teams/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Team getTeam(@PathVariable Long id) {
-    return service.getOrThrow(id);
-  }
-
-  @PutMapping(value = "/teams/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Team updateTeam(@PathVariable Long id, @RequestBody TeamDto dto) {
+  @PutMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
+  public TeamUser updateTeamUser(@PathVariable Long teamId,
+      @RequestBody TeamUser dto) {
     verifyRole();
     dto.validate();
-    return service.updateOrThrow(id, dto);
+    return service.updateTeamUserOrThrow(teamId, dto);
   }
 
-  @DeleteMapping(value = "/teams/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(value = "/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.NO_CONTENT)
-  public void deleteTeam(@PathVariable Long id) {
+  public void deleteTeamUser(@PathVariable Long teamId,
+      @PathVariable String userId) {
     verifyRole();
-    service.deleteOrThrow(id);
+    service.deleteTeamUserOrThrow(teamId, userId);
+  }
+
+  @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(code = HttpStatus.NO_CONTENT)
+  public List<TeamUser> getTeamUsers(@PathVariable Long teamId) {
+    return service.getTeamUsers(teamId);
   }
 
 }

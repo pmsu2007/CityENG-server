@@ -10,7 +10,10 @@ import lombok.ToString;
 public class TeamAttr extends TeamAttrDto {
 
   private Long id;
+
+  @EqualsAndHashCode.Exclude
   private Long createdAt;
+  @EqualsAndHashCode.Exclude
   private Long updatedAt;
 
 }

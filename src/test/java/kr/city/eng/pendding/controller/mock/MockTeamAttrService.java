@@ -62,6 +62,23 @@ public class MockTeamAttrService extends MockService {
     return convertDto(result);
   }
 
+  public TeamAttr update(Long teamId, Long id, TeamAttrDto dto) throws Exception {
+    String content = mapper.writeValueAsString(dto);
+
+    MvcResult result = mockMvc.perform(apiPut("/{teamId}/attrs/{id}", teamId, id).content(content))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(notNullValue())))
+        .andReturn();
+    return convertDto(result);
+  }
+
+  public void delete(Long teamId, Long id) throws Exception {
+    mockMvc.perform(apiDel("/{teamId}/attrs/{id}", teamId, id))
+        .andExpect(status().isNoContent())
+        .andReturn();
+  }
+
   public List<TeamAttr> getAll(Long teamId) throws Exception {
     MvcResult result = mockMvc.perform(apiGet("/{teamId}/attrs", teamId))
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -85,23 +102,6 @@ public class MockTeamAttrService extends MockService {
         .andExpect(jsonPath("$.id", is(notNullValue())))
         .andReturn();
     return convertDto(result);
-  }
-
-  public TeamAttr update(Long id, TeamAttrDto dto) throws Exception {
-    String content = mapper.writeValueAsString(dto);
-
-    MvcResult result = mockMvc.perform(apiPut("/attrs/{id}", id).content(content))
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(notNullValue())))
-        .andReturn();
-    return convertDto(result);
-  }
-
-  public void delete(Long id) throws Exception {
-    mockMvc.perform(apiDel("/attrs/{id}", id))
-        .andExpect(status().isNoContent())
-        .andReturn();
   }
 
   public List<String> getAttrValues(Long id) throws Exception {

@@ -76,12 +76,12 @@ public class ApiTeamService {
     return entity;
   }
 
-  private void createTeamUserOrThrow(TbTeam team, TbTeamRole role, TbUser user) {
+  private TbTeamUser createTeamUserOrThrow(TbTeam team, TbTeamRole role, TbUser user) {
     TbTeamUser entity = new TbTeamUser();
     entity.setTeam(team);
     entity.setTeamRole(role);
     entity.setUser(user);
-    storeTeamUser.save(entity);
+    return storeTeamUser.save(entity);
   }
 
   @Transactional
@@ -93,7 +93,15 @@ public class ApiTeamService {
 
   @Transactional
   public void deleteOrThrow(Long id) {
-    store.deleteById(id);
+    TbTeam entity = findByIdOrThrow(id);
+    deleteOrThrow(entity);
+  }
+
+  @Transactional
+  public void deleteOrThrow(TbTeam entity) {
+    storeTeamUser.deleteByTeam(entity);
+    storeTeamUser.flush();
+    store.delete(entity);
   }
 
 }

@@ -56,6 +56,23 @@ public class MockTeamProductService extends MockService {
     return convertDto(result);
   }
 
+  public TeamProduct update(Long teamId, Long id, TeamProductDto dto) throws Exception {
+    String content = mapper.writeValueAsString(dto);
+
+    MvcResult result = mockMvc.perform(apiPatch("/{teamId}/products/{id}", teamId, id).content(content))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(notNullValue())))
+        .andReturn();
+    return convertDto(result);
+  }
+
+  public void delete(Long teamId, Long id) throws Exception {
+    mockMvc.perform(apiDel("/{teamId}/products/{id}", teamId, id))
+        .andExpect(status().isNoContent())
+        .andReturn();
+  }
+
   public List<TeamProduct> getPage(Long teamId, LinkedMultiValueMap<String, String> params) throws Exception {
     MvcResult result = mockMvc.perform(apiGet("/{teamId}/product/page", teamId).params(params))
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -81,23 +98,6 @@ public class MockTeamProductService extends MockService {
     String json = result.getResponse().getContentAsString();
     return getData(json, new TypeReference<Place>() {
     });
-  }
-
-  public TeamProduct update(Long id, TeamProductDto dto) throws Exception {
-    String content = mapper.writeValueAsString(dto);
-
-    MvcResult result = mockMvc.perform(apiPatch("/products/{id}", id).content(content))
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(notNullValue())))
-        .andReturn();
-    return convertDto(result);
-  }
-
-  public void delete(Long id) throws Exception {
-    mockMvc.perform(apiDel("/products/{id}", id))
-        .andExpect(status().isNoContent())
-        .andReturn();
   }
 
 }

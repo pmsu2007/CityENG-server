@@ -41,17 +41,18 @@ public class ApiTeamAttrController {
     return service.createOrThrow(teamId, dto);
   }
 
-  @PutMapping(value = "/attrs/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public TeamAttr updateTeamAttr(@PathVariable Long id, @RequestBody TeamAttrDto dto) {
-    // TODO: teamId 추가해야 함.
+  @PutMapping(value = "/{teamId}/attrs/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public TeamAttr updateTeamAttr(@PathVariable Long teamId,
+      @PathVariable Long id, @RequestBody TeamAttrDto dto) {
+    teamPermission.verify(teamId, TeamPermission.ATTRIBUTE);
     dto.validate();
     return service.updateOrThrow(id, dto);
   }
 
-  @DeleteMapping(value = "/attrs/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(value = "/{teamId}/attrs/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.NO_CONTENT)
-  public void deleteTeamAttr(@PathVariable Long id) {
-    // TODO: teamId 추가해야 함.
+  public void deleteTeamAttr(@PathVariable Long teamId, @PathVariable Long id) {
+    teamPermission.verify(teamId, TeamPermission.ATTRIBUTE);
     service.deleteOrThrow(id);
   }
 

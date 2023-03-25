@@ -34,6 +34,8 @@ public class ApiUserService {
   private final TbUserMapper mapper;
   private final TbTeamMapper mapperTeam;
 
+  private final ApiTeamService teamService;
+
   private TbUser findUserOrThrow(String userId) {
     return store.findById(userId)
         .orElseThrow(() -> ExceptionUtil.id(userId, TbUser.class.getName()));
@@ -79,6 +81,7 @@ public class ApiUserService {
   @Transactional
   public void deleteOrThrow() {
     TbUser entity = findUserOrThrow(AppUtil.getAuthUser());
+    entity.getTeams().forEach(teamService::deleteOrThrow);
     store.delete(entity);
   }
 

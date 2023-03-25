@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 
 import kr.city.eng.pendding.dto.TeamPending;
 import kr.city.eng.pendding.service.ApiTeamPendingService;
+import kr.city.eng.pendding.service.ApiTeamPermission;
 import kr.city.eng.pendding.store.entity.enums.PendingType;
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,20 @@ import lombok.RequiredArgsConstructor;
 public class ApiTeamPendingController {
 
   private final ApiTeamPendingService service;
+  private final ApiTeamPermission teamPermission;
+
+  @PostMapping(value = "/{teamId}/pending", produces = MediaType.APPLICATION_JSON_VALUE)
+  public TeamPending setPendingType(@PathVariable Long teamId, @RequestBody TeamPending dto) {
+    teamPermission.verify(teamId, dto.getType().toTeamPermission());
+    dto.validate();
+    return service.setPendingType(teamId, dto);
+  }
+
+  @DeleteMapping(value = "/{teamId}/pendings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(code = HttpStatus.NO_CONTENT)
+  public void deleteTeamPending(@PathVariable Long teamId, @PathVariable Long id) {
+    service.deleteOrThrow(teamId, id);
+  }
 
   @GetMapping(value = "/{teamId}/pendings", produces = MediaType.APPLICATION_JSON_VALUE)
   public List<TeamPending> getTeamPendings(@PathVariable Long teamId,
@@ -47,18 +62,6 @@ public class ApiTeamPendingController {
   @GetMapping(value = "/pendings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public TeamPending getTeamPending(@PathVariable Long id) {
     return service.getOrThrow(id);
-  }
-
-  @PostMapping(value = "/{teamId}/pending", produces = MediaType.APPLICATION_JSON_VALUE)
-  public TeamPending setPendingType(@PathVariable Long teamId, @RequestBody TeamPending dto) {
-    dto.validate();
-    return service.setPendingType(teamId, dto);
-  }
-
-  @DeleteMapping(value = "/pendings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(code = HttpStatus.NO_CONTENT)
-  public void deleteTeamPending(@PathVariable Long id) {
-    service.deleteOrThrow(id);
   }
 
 }

@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.city.eng.pendding.dto.TeamPlace;
 import kr.city.eng.pendding.dto.TeamPlaceDto;
+import kr.city.eng.pendding.service.ApiTeamPermission;
 import kr.city.eng.pendding.service.ApiTeamPlaceService;
+import kr.city.eng.pendding.store.entity.enums.TeamPermission;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -28,12 +30,29 @@ import lombok.RequiredArgsConstructor;
 public class ApiTeamPlaceController {
 
   private final ApiTeamPlaceService service;
+  private final ApiTeamPermission teamPermission;
 
   @PostMapping(value = "/{teamId}/place", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(code = HttpStatus.CREATED)
   public TeamPlace createTeamPlace(@PathVariable Long teamId, @RequestBody TeamPlaceDto dto) {
+    teamPermission.verify(teamId, TeamPermission.PLACE);
     dto.validate();
     return service.createOrThrow(teamId, dto);
+  }
+
+  @PutMapping(value = "/{teamId}/places/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public TeamPlace updateTeamPlace(@PathVariable Long teamId,
+      @PathVariable Long id, @RequestBody TeamPlaceDto dto) {
+    teamPermission.verify(teamId, TeamPermission.PLACE);
+    dto.validate();
+    return service.updateOrThrow(id, dto);
+  }
+
+  @DeleteMapping(value = "/{teamId}/places/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(code = HttpStatus.NO_CONTENT)
+  public void deleteTeamPlace(@PathVariable Long teamId, @PathVariable Long id) {
+    teamPermission.verify(teamId, TeamPermission.PLACE);
+    service.deleteOrThrow(id);
   }
 
   @GetMapping(value = "/{teamId}/places", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,18 +68,6 @@ public class ApiTeamPlaceController {
   @GetMapping(value = "/places/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public TeamPlace getTeamPlace(@PathVariable Long id) {
     return service.getOrThrow(id);
-  }
-
-  @PutMapping(value = "/places/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public TeamPlace updateTeamPlace(@PathVariable Long id, @RequestBody TeamPlaceDto dto) {
-    dto.validate();
-    return service.updateOrThrow(id, dto);
-  }
-
-  @DeleteMapping(value = "/places/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(code = HttpStatus.NO_CONTENT)
-  public void deleteTeamPlace(@PathVariable Long id) {
-    service.deleteOrThrow(id);
   }
 
 }

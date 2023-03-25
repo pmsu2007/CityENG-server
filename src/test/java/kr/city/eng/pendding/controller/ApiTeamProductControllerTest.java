@@ -56,7 +56,8 @@ public class ApiTeamProductControllerTest {
   @BeforeEach
   public void setUp() {
     initialize.clearAll();
-    this.teamEntity = initialize.initTeamAndPlaceAndAttr(2, 5);
+    this.teamEntity = initialize.initTeam();
+    initialize.initTeamAndPlaceAndAttr(this.teamEntity, 2, 5);
 
     mockMvc = MockMvcBuilders.standaloneSetup(controller)
         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
@@ -83,7 +84,7 @@ public class ApiTeamProductControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void create() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamProduct dto = mockService.add(teamId, getTeamProductDto());
@@ -93,7 +94,7 @@ public class ApiTeamProductControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void getById() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamProduct dto = mockService.add(teamId, getTeamProductDto());
@@ -103,7 +104,7 @@ public class ApiTeamProductControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void update() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamProduct dto = mockService.add(teamId, getTeamProductDto());
@@ -118,20 +119,17 @@ public class ApiTeamProductControllerTest {
     newDto.setName(dto.getName());
     newDto.addAttribute(attr.getId(), attr.getName(), attr.getValue());
 
-    TeamProduct result = mockService.update(dto.getId(), newDto);
-
-    // 업데이트 시간은 동기화
-    dto.setUpdatedAt(result.getUpdatedAt());
+    TeamProduct result = mockService.update(teamId, dto.getId(), newDto);
     assertDtoEquals(dto, result);
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void delete() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamProduct dto = mockService.add(teamId, getTeamProductDto());
 
-    mockService.delete(dto.getId());
+    mockService.delete(teamId, dto.getId());
 
     assertFalse(store.findById(dto.getId()).isPresent());
     assertEquals(0, storeTeamProdPlace.findByProductId(dto.getId()).size());

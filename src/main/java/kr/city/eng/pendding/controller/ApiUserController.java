@@ -2,6 +2,7 @@ package kr.city.eng.pendding.controller;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,8 +36,8 @@ public class ApiUserController {
   }
 
   @PostMapping(value = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)
-  public String signIn(@RequestBody UserSign dto) {
-    return service.signIn(dto);
+  public Map<String, String> signIn(@RequestBody UserSign dto) {
+    return Collections.singletonMap("apikey", service.signIn(dto));
   }
 
   @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)

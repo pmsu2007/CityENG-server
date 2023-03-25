@@ -2,7 +2,6 @@ package kr.city.eng.pendding.store.entity;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -39,7 +38,7 @@ public class TbUser extends TbDateEntity {
 
   private String imageUrl;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "user")
   private List<TbTeam> teams;
 
   @Column(nullable = false)

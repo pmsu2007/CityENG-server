@@ -57,7 +57,8 @@ public class ApiTeamPendingControllerTest {
   @BeforeEach
   public void setUp() {
     initialize.clearAll();
-    this.teamEntity = initialize.initTeamAndPlaceAndAttr(2, 5);
+    this.teamEntity = initialize.initTeam();
+    initialize.initTeamAndPlaceAndAttr(this.teamEntity, 2, 5);
 
     mockMvc = MockMvcBuilders.standaloneSetup(productController, controller)
         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
@@ -113,7 +114,7 @@ public class ApiTeamPendingControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void pendingIn() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamProduct product = mockProduct.add(teamId, getTeamProductDto());
@@ -141,7 +142,7 @@ public class ApiTeamPendingControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void pendingMove() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamProduct product = mockProduct.add(teamId, getTeamProductDto());
@@ -175,7 +176,7 @@ public class ApiTeamPendingControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "admin", roles = { "ADMIN" })
+  @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void delete() throws Exception {
     Long teamId = this.teamEntity.getId();
     TeamProduct product = mockProduct.add(teamId, getTeamProductDto());
@@ -188,7 +189,7 @@ public class ApiTeamPendingControllerTest {
     assertEquals(expected, result);
 
     // 삭제
-    mockService.delete(result.getId());
+    mockService.delete(teamId, result.getId());
 
     assertEquals(0, storeHist.count());
     assertEquals(0, store.count());
