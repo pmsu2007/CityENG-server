@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 
 import kr.city.eng.pendding.TestStoreInitialize;
 import kr.city.eng.pendding.controller.mock.MockTeamRoleService;
