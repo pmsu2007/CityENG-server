@@ -131,6 +131,8 @@ public class ApiTeamPendingService {
     } else {
       saveTeamProdcutPlace(product, toPlace, hist, type);
     }
+    pending.setFromQuantity(hist.getFromQuantity());
+    pending.setToQuantity(hist.getToQuantity());
   }
 
   private TbTeamProdPlace getTbTeamProdPlace(TbTeamProduct product, TbTeamPlace place) {
@@ -149,7 +151,8 @@ public class ApiTeamPendingService {
     int quantity = entity.getQuantity();
     hist.setFromQuantity(quantity);
     hist.setToQuantity(quantity);
-    entity.setQuantity(hist.adjustToQuantity(type, quantity));
+    quantity = hist.adjustToQuantity(type, quantity);
+    entity.setQuantity(quantity);
     storeProdPlace.save(entity);
   }
 

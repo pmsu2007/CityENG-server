@@ -187,12 +187,16 @@ public class ApiTeamPendingControllerTest {
     // 히스토리 확인
     TeamPending expected = mockService.getById(result.getId());
     assertEquals(expected, result);
+    // 제품 추가시 조정히스토리 있음.
+    assertEquals(2, storeHist.count());
+    assertEquals(2, store.count());
 
     // 삭제
     mockService.delete(teamId, result.getId());
 
-    assertEquals(0, storeHist.count());
-    assertEquals(0, store.count());
+    // 제품 추가시 조정히스토리 있음.
+    assertEquals(1, storeHist.count());
+    assertEquals(1, store.count());
   }
 
 }
