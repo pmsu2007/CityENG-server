@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import kr.city.eng.pendding.store.entity.TbDateEntity;
 import kr.city.eng.pendding.store.entity.TbUser;
@@ -17,7 +18,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "TB_TEAM_USER")
+@Table(name = "TB_TEAM_USER", uniqueConstraints = @UniqueConstraint(columnNames = { "team_id", "user_id" }))
 public class TbTeamUser extends TbDateEntity {
 
   @Id

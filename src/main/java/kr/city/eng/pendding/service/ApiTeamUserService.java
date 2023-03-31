@@ -63,6 +63,7 @@ public class ApiTeamUserService {
           return ExceptionUtil.id(msg, TbTeamUser.class.getName());
         });
     entity.setTeamRole(role);
+    entity.setUpdatedAt(System.currentTimeMillis());
     store.save(entity);
     teamPermission.add(teamId, dto.getUserId(), role.getPermissions());
     return dto;
@@ -73,6 +74,8 @@ public class ApiTeamUserService {
     entity.setTeam(team);
     entity.setTeamRole(role);
     entity.setUser(user);
+    entity.setCreatedAt(System.currentTimeMillis());
+    entity.setUpdatedAt(System.currentTimeMillis());
     return store.save(entity);
   }
 
