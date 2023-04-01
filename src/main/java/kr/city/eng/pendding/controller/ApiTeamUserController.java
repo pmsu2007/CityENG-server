@@ -64,7 +64,6 @@ public class ApiTeamUserController {
   }
 
   @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(code = HttpStatus.NO_CONTENT)
   public List<TeamUser> getTeamUsers(@PathVariable Long teamId) {
     return service.getTeamUsers(teamId);
   }
