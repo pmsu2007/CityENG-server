@@ -88,12 +88,28 @@ querydsl {
    jpa = true
    querydslSourcesDir = querydslDir
 }
-sourceSets {
-  main.java.srcDir querydslDir
-}
+// sourceSets {
+//   main.java.srcDir querydslDir
+// }
 // querydsl 컴파일시 사용할 옵션 설정
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
+}
+
+sourceSets {
+	main {
+    java.srcDir querydslDir
+		resources {
+			if (project.hasProperty("profile")) {
+				println 'System.setProperty : '+project.getProperty("profile")
+				System.setProperty "spring.profiles.active", project.getProperty("profile")
+				srcDirs = ["src/main/resources", "src/main/resources-"+System.getProperty("spring.profiles.active")]
+				exclude(['application-*.properties'])
+			} else {
+				srcDir "src/main/resources"
+			}
+		}
+	}
 }
 
 tasks.named('test') {
