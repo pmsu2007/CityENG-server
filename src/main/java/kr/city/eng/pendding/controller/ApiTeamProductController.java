@@ -67,7 +67,7 @@ public class ApiTeamProductController {
       @PathVariable Long placeId,
       @RequestParam(required = false) String value,
       @PageableDefault(size = 10) Pageable pageable) {
-    return service.getEntities(teamId, value, pageable);
+    return service.getEntities(teamId, placeId, value, pageable);
   }
 
   @GetMapping(value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
