@@ -16,6 +16,7 @@ public interface TbUserMapper {
   @Mapping(target = "role", ignore = true)
   @Mapping(target = "teams", ignore = true)
   @Mapping(target = "password", ignore = true)
+  @Mapping(target = "apikey", ignore = true)
   @Mapping(target = "createdAt", expression = "java(System.currentTimeMillis())")
   @Mapping(target = "updatedAt", expression = "java(System.currentTimeMillis())")
   TbUser toEntity(UserDto entity);

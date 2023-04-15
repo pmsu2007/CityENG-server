@@ -2,8 +2,10 @@ package kr.city.eng.pendding.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import kr.city.eng.pendding.dto.TeamPending;
 import kr.city.eng.pendding.dto.TeamPendingProd;
@@ -67,6 +69,17 @@ public class ApiTeamProductService {
   public Page<TeamProduct> getEntities(Long teamId, String value, Pageable pageable) {
     TbTeam team = findTeamOrThrow(teamId);
     return store.findDtoByTeam(team, value, pageable);
+  }
+
+  @Transactional
+  public Page<TeamProduct> getEntities(Long teamId, Long placeId, String value, Pageable pageable) {
+    TbTeam team = findTeamOrThrow(teamId);
+    TbTeamPlace place = findTeamPlaceOrThrow(placeId);
+    if( !place.getTeam().equals(team) ) {
+      String msg = String.format("No results were retrieved by teamId([%s]) from the [%s] store.", teamId, TbTeamPlace.class.getName());
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, msg);
+    }
+    return store.findDtoByTeamPlace(place, value, pageable);
   }
 
   @Transactional
