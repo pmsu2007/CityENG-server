@@ -28,19 +28,19 @@ public class TbTeamPendingProd {
   private TbTeamPending pending;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "product_id", nullable = false)
+  @JoinColumn(name = "product_id", nullable = true)
   private TbTeamProduct product;
 
   private int quantity;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "to_place_id", nullable = false)
+  @JoinColumn(name = "to_place_id", nullable = true)
   private TbTeamPlace toPlace;
   @Column(nullable = false)
   private Integer toQuantity;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "from_place_id", nullable = false)
+  @JoinColumn(name = "from_place_id", nullable = true)
   private TbTeamPlace fromPlace;
   @Column(nullable = false)
   private Integer fromQuantity;

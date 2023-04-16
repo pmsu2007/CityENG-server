@@ -22,6 +22,7 @@ import kr.city.eng.pendding.store.entity.team.TbTeamProdPlace;
 import kr.city.eng.pendding.store.entity.team.TbTeamProduct;
 import kr.city.eng.pendding.store.mapper.TbTeamProductMapper;
 import kr.city.eng.pendding.store.repo.TbTeamAttrRepo;
+import kr.city.eng.pendding.store.repo.TbTeamPendingProdRepo;
 import kr.city.eng.pendding.store.repo.TbTeamPlaceRepo;
 import kr.city.eng.pendding.store.repo.TbTeamProdAttrRepo;
 import kr.city.eng.pendding.store.repo.TbTeamProdPlaceRepo;
@@ -42,6 +43,7 @@ public class ApiTeamProductService {
   private final TbTeamRepo storeTeam;
   private final TbTeamPlaceRepo storeTeamPlace;
   private final TbTeamAttrRepo storeTeamAttr;
+  private final TbTeamPendingProdRepo storePendingProd;
 
   private final ApiTeamPendingService pendingService;
 
@@ -148,6 +150,9 @@ public class ApiTeamProductService {
 
   @Transactional
   public void deleteOrThrow(Long id) {
+    // pending 기록에서 제품ID를 null 처리
+    storePendingProd.setProductNull(id);
+
     storeProdPlace.deleteByProductId(id);
     storeProdAttr.deleteByProductId(id);
     store.deleteById(id);
