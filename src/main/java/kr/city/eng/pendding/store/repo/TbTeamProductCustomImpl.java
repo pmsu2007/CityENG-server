@@ -139,11 +139,13 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
 
   private List<TeamProduct> getDtoByTeamPlace(TbTeamPlace place, String value, Pageable pageable) {
     JPAQuery<Tuple> query = getTeamPlaceProductQuery(place, value, pageable);
+    Long placeId = place.getId();
+    String placeName = place.getName();
     Map<Long, TeamProduct> map = query.fetch().stream()
         .map(tuple -> {
           TeamProduct result = mapper.toDto(tuple);
-          result.addPlace(place.getId(), place.getName(),
-              tuple.get(tbTeamProdPlace.quantity));
+          Integer quantity = tuple.get(tbTeamProdPlace.quantity);
+          result.addPlace(placeId, placeName, quantity.intValue());
           return result;
         })
         .collect(Collectors.toMap(TeamProduct::getId, Function.identity()));
@@ -161,7 +163,7 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
   private JPAQuery<Tuple> getTeamPlaceProductQuery(QTuple select, TbTeamPlace place, String value, Pageable pageable) {
     JPAQuery<Tuple> query = queryFactory.select(select)
         .from(tbTeamProduct)
-        .leftJoin(tbTeamProdPlace).on(tbTeamProdPlace.id.eq(place.getId())
+        .leftJoin(tbTeamProdPlace).on(tbTeamProdPlace.place.id.eq(place.getId())
             .and(tbTeamProdPlace.product.id.eq(tbTeamProduct.id)));
 
     // 속성의 값을 비교할 경우는 tbTeamProdAttr도 조인 해줘야 함.
