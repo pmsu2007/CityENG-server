@@ -2,8 +2,10 @@ package kr.city.eng.pendding.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import kr.city.eng.pendding.dto.TeamPending;
 import kr.city.eng.pendding.dto.TeamPendingProd;
@@ -20,6 +22,7 @@ import kr.city.eng.pendding.store.entity.team.TbTeamProdPlace;
 import kr.city.eng.pendding.store.entity.team.TbTeamProduct;
 import kr.city.eng.pendding.store.mapper.TbTeamProductMapper;
 import kr.city.eng.pendding.store.repo.TbTeamAttrRepo;
+import kr.city.eng.pendding.store.repo.TbTeamPendingProdRepo;
 import kr.city.eng.pendding.store.repo.TbTeamPlaceRepo;
 import kr.city.eng.pendding.store.repo.TbTeamProdAttrRepo;
 import kr.city.eng.pendding.store.repo.TbTeamProdPlaceRepo;
@@ -40,6 +43,7 @@ public class ApiTeamProductService {
   private final TbTeamRepo storeTeam;
   private final TbTeamPlaceRepo storeTeamPlace;
   private final TbTeamAttrRepo storeTeamAttr;
+  private final TbTeamPendingProdRepo storePendingProd;
 
   private final ApiTeamPendingService pendingService;
 
@@ -67,6 +71,17 @@ public class ApiTeamProductService {
   public Page<TeamProduct> getEntities(Long teamId, String value, Pageable pageable) {
     TbTeam team = findTeamOrThrow(teamId);
     return store.findDtoByTeam(team, value, pageable);
+  }
+
+  @Transactional
+  public Page<TeamProduct> getEntities(Long teamId, Long placeId, String value, Pageable pageable) {
+    TbTeam team = findTeamOrThrow(teamId);
+    TbTeamPlace place = findTeamPlaceOrThrow(placeId);
+    if( !place.getTeam().equals(team) ) {
+      String msg = String.format("No results were retrieved by teamId([%s]) from the [%s] store.", teamId, TbTeamPlace.class.getName());
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, msg);
+    }
+    return store.findDtoByTeamPlace(place, value, pageable);
   }
 
   @Transactional
@@ -135,6 +150,9 @@ public class ApiTeamProductService {
 
   @Transactional
   public void deleteOrThrow(Long id) {
+    // pending 기록에서 제품ID를 null 처리
+    storePendingProd.setProductNull(id);
+
     storeProdPlace.deleteByProductId(id);
     storeProdAttr.deleteByProductId(id);
     store.deleteById(id);

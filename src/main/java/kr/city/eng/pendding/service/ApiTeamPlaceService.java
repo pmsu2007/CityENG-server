@@ -13,6 +13,7 @@ import kr.city.eng.pendding.dto.TeamPlaceDto;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
 import kr.city.eng.pendding.store.entity.team.TbTeamPlace;
 import kr.city.eng.pendding.store.mapper.TbTeamPlaceMapper;
+import kr.city.eng.pendding.store.repo.TbTeamPendingProdRepo;
 import kr.city.eng.pendding.store.repo.TbTeamPlaceRepo;
 import kr.city.eng.pendding.store.repo.TbTeamProdPlaceRepo;
 import kr.city.eng.pendding.store.repo.TbTeamRepo;
@@ -28,6 +29,7 @@ public class ApiTeamPlaceService {
   private final TbTeamPlaceMapper mapper;
 
   private final TbTeamRepo storeTeam;
+  private final TbTeamPendingProdRepo storePendingProd;
 
   private TbTeamPlace findByIdOrThrow(Long id) {
     return store.findById(id)
@@ -74,6 +76,9 @@ public class ApiTeamPlaceService {
 
   @Transactional
   public void deleteOrThrow(Long id) {
+    storePendingProd.setToPlaceNull(id);
+    storePendingProd.setFromPlaceNull(id);
+
     storeProdPlace.deleteByPlaceId(id);
     store.deleteById(id);
   }

@@ -28,6 +28,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.city.eng.pendding.dto.TeamProduct;
 import kr.city.eng.pendding.dto.TeamProductDto.Place;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
+import kr.city.eng.pendding.store.entity.team.TbTeamPlace;
 import kr.city.eng.pendding.store.mapper.TbTeamProductMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -64,6 +65,15 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
   public Page<TeamProduct> findDtoByTeam(TbTeam team, String value, Pageable pageable) {
     List<TeamProduct> contents = getDtoByTeam(team, value, pageable);
     JPAQuery<Tuple> coutnQuery = getTeamProductCountQuery(team, value);
+    return PageableExecutionUtils.getPage(contents, pageable, () -> coutnQuery.fetch().size());
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  @SuppressWarnings("squid:S4449")
+  public Page<TeamProduct> findDtoByTeamPlace(TbTeamPlace place, String value, Pageable pageable) {
+    List<TeamProduct> contents = getDtoByTeamPlace(place, value, pageable);
+    JPAQuery<Tuple> coutnQuery = getTeamPlaceProductCountQuery(place, value);
     return PageableExecutionUtils.getPage(contents, pageable, () -> coutnQuery.fetch().size());
   }
 
@@ -112,8 +122,7 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
           .on(tbTeamProdAttr.product.id.eq(tbTeamProduct.id))
           .distinct();
 
-      query.where(tbTeamProduct.barcode.containsIgnoreCase(value)
-          .or(tbTeamProduct.name.containsIgnoreCase(value))
+      query.where(tbTeamProduct.name.containsIgnoreCase(value)
           .or(tbTeamProdAttr.attrValue.containsIgnoreCase(value)));
     }
     if (pageable != null) {
@@ -128,10 +137,67 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
     return getTeamProductQuery(select, team, value, null);
   }
 
+  private List<TeamProduct> getDtoByTeamPlace(TbTeamPlace place, String value, Pageable pageable) {
+    JPAQuery<Tuple> query = getTeamPlaceProductQuery(place, value, pageable);
+    Long placeId = place.getId();
+    String placeName = place.getName();
+    Map<Long, TeamProduct> map = query.fetch().stream()
+        .map(tuple -> {
+          TeamProduct result = mapper.toDto(tuple);
+          Integer quantity = tuple.get(tbTeamProdPlace.quantity);
+          result.addPlace(placeId, placeName, quantity.intValue());
+          return result;
+        })
+        .collect(Collectors.toMap(TeamProduct::getId, Function.identity()));
+
+    getTeamProdAttrQuery(map.keySet()).fetch()
+        .forEach(it -> mapper.setTeamProdAttr(it, map));
+    return Lists.newArrayList(map.values());
+  }
+
+  private JPAQuery<Tuple> getTeamPlaceProductQuery(TbTeamPlace place, String value, Pageable pageable) {
+    QTuple select = getSelectTeamPlaceProduct();
+    return getTeamPlaceProductQuery(select, place, value, pageable);
+  }
+
+  private JPAQuery<Tuple> getTeamPlaceProductQuery(QTuple select, TbTeamPlace place, String value, Pageable pageable) {
+    JPAQuery<Tuple> query = queryFactory.select(select)
+        .from(tbTeamProduct)
+        .leftJoin(tbTeamProdPlace).on(tbTeamProdPlace.place.id.eq(place.getId())
+            .and(tbTeamProdPlace.product.id.eq(tbTeamProduct.id)));
+
+    // 속성의 값을 비교할 경우는 tbTeamProdAttr도 조인 해줘야 함.
+    if (StringUtils.hasLength(value)) {
+      query.leftJoin(tbTeamProdAttr)
+          .on(tbTeamProdAttr.product.id.eq(tbTeamProduct.id))
+          .distinct();
+
+      query.where(tbTeamProduct.name.containsIgnoreCase(value)
+          .or(tbTeamProdAttr.attrValue.containsIgnoreCase(value)));
+    }
+    if (pageable != null) {
+      query.offset(pageable.getOffset()) // 페이지 번호
+          .limit(pageable.getPageSize()); // 페이지 사이즈
+    }
+    return query;
+  }
+
+  private JPAQuery<Tuple> getTeamPlaceProductCountQuery(TbTeamPlace place, String value) {
+    QTuple select = Projections.tuple(tbTeamProduct.id);
+    return getTeamPlaceProductQuery(select, place, value, null);
+  }
+
   private QTuple getSelectTeamProduct() {
     return Projections.tuple(
         tbTeamProduct.id, tbTeamProduct.barcode, tbTeamProduct.name,
         tbTeamProduct.imageUrl, tbTeamProduct.createdAt, tbTeamProduct.updatedAt);
+  }
+
+  private QTuple getSelectTeamPlaceProduct() {
+    return Projections.tuple(
+        tbTeamProduct.id, tbTeamProduct.barcode, tbTeamProduct.name,
+        tbTeamProduct.imageUrl, tbTeamProduct.createdAt, tbTeamProduct.updatedAt,
+        tbTeamProdPlace.quantity);
   }
 
   private JPAQuery<Tuple> getTeamProdAttrQuery(Set<Long> ids) {

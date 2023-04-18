@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import kr.city.eng.pendding.dto.TeamProduct;
 import kr.city.eng.pendding.dto.TeamProductDto.Place;
 import kr.city.eng.pendding.store.entity.team.TbTeam;
+import kr.city.eng.pendding.store.entity.team.TbTeamPlace;
 
 public interface TbTeamProductCustom {
 
@@ -18,5 +19,7 @@ public interface TbTeamProductCustom {
   Page<TeamProduct> findDtoByTeam(TbTeam team, Pageable pageable);
 
   Page<TeamProduct> findDtoByTeam(TbTeam team, String value, Pageable pageable);
+
+  Page<TeamProduct> findDtoByTeamPlace(TbTeamPlace place, String value, Pageable pageable);
 
 }
