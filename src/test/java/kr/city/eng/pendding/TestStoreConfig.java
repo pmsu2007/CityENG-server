@@ -43,7 +43,7 @@ public class TestStoreConfig {
       DataSource dataSource) {
     HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
     jpaVendorAdapter.setGenerateDdl(true);
-    jpaVendorAdapter.setShowSql(true);
+    jpaVendorAdapter.setShowSql(false);
 
     LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
     Properties jpaProperties = new Properties();

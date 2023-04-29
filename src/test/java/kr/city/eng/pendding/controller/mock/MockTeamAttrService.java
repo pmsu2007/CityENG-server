@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.http.MediaType;
@@ -26,19 +27,19 @@ public class MockTeamAttrService extends MockService {
   }
 
   private TeamAttr convertDto(MvcResult result) throws Exception {
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<TeamAttr>() {
     });
   }
 
   private List<TeamAttr> convertList(MvcResult result) throws Exception {
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<List<TeamAttr>>() {
     });
   }
 
   private List<TeamAttr> convertPage(MvcResult result) throws Exception {
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<List<TeamAttr>>() {
     }, "content");
   }
@@ -48,6 +49,15 @@ public class MockTeamAttrService extends MockService {
     dto.setIndex(index);
     // dto.setType(AttrType.NUMBER);
     dto.setName("TeamAttr:" + AttrType.NUMBER);
+    return dto;
+  }
+
+  public TeamAttrDto createEnumAttr() {
+    TeamAttrDto dto = new TeamAttrDto();
+    dto.setIndex(0);
+    dto.setType(AttrType.STRING);
+    dto.setName("종류");
+    dto.addValue("도시가스", "LPG", "기타");
     return dto;
   }
 
@@ -109,7 +119,7 @@ public class MockTeamAttrService extends MockService {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk())
         .andReturn();
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<List<String>>() {
     });
   }

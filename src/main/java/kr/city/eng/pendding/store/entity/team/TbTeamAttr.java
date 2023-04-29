@@ -32,6 +32,9 @@ public class TbTeamAttr extends TbDateEntity {
   private int index;
   private AttrType type = AttrType.STRING;
 
+  @Column(length = 4000)
+  private String enumValues;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "team_id", nullable = false)
   private TbTeam team;

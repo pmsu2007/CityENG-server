@@ -82,6 +82,10 @@ public class ApiTeamAttrService {
   @Transactional
   public Collection<String> getAttrValues(Long id) {
     TbTeamAttr attr = findByIdOrThrow(id);
+    List<String> values = mapper.stringValuesToList(attr.getEnumValues());
+    if (!values.isEmpty()) {
+      return values;
+    }
     return storeProdAttr.findValuesByAttrGroupBy(attr);
   }
 

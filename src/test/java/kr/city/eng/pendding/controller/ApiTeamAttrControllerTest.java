@@ -56,7 +56,8 @@ public class ApiTeamAttrControllerTest {
 
     mockMvc = MockMvcBuilders.standaloneSetup(controller)
         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-        .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper)).build();
+        .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
+        .build();
 
     mockService.setUp(objectMapper, mockMvc);
   }
@@ -65,7 +66,7 @@ public class ApiTeamAttrControllerTest {
   @WithMockUser(username = "admin", authorities = { "ADMIN" })
   public void create() throws Exception {
     Long teamId = this.teamEntity.getId();
-    TeamAttr dto = mockService.add(teamId, mockService.create(0));
+    TeamAttr dto = mockService.add(teamId, mockService.createEnumAttr());
 
     TbTeamAttr result = store.findById(dto.getId()).get();
     assertEquals(dto, storeMapper.toDto(result));
