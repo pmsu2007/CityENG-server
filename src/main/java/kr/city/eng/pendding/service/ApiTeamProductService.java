@@ -62,7 +62,7 @@ public class ApiTeamProductService {
         .orElseThrow(() -> ExceptionUtil.id(id, TbTeamPlace.class.getName()));
   }
 
-  private TbTeamAttr findTemaAttrOrThrow(Long id) {
+  private TbTeamAttr findTeamAttrOrThrow(Long id) {
     return storeTeamAttr.findById(id)
         .orElseThrow(() -> ExceptionUtil.id(id, TbTeamAttr.class.getName()));
   }
@@ -91,7 +91,7 @@ public class ApiTeamProductService {
     entity = store.save(entity);
 
     for (Attr attrDto : dto.getAttributes()) {
-      TbTeamAttr attr = findTemaAttrOrThrow(attrDto.getId());
+      TbTeamAttr attr = findTeamAttrOrThrow(attrDto.getId());
       storeProdAttr.save(new TbTeamProdAttr(entity, attr, attrDto.getValue()));
     }
 
@@ -141,10 +141,16 @@ public class ApiTeamProductService {
       store.save(entity);
     }
 
-    team.getAttributes().forEach(it -> storeProdAttr.findById(id).ifPresent(attr -> {
-      attr.setAttrValue(it.getValue());
-      storeProdAttr.save(attr);
-    }));
+    team.getAttributes().forEach(attrDto -> {
+      storeProdAttr.findByProductIdAndAttributeId(id, attrDto.getId())
+      .ifPresentOrElse(attr -> {
+        attr.setAttrValue(attrDto.getValue());
+        storeProdAttr.save(attr);
+      }, () -> {
+        TbTeamAttr attr = findTeamAttrOrThrow(attrDto.getId());
+        storeProdAttr.save(new TbTeamProdAttr(entity, attr, attrDto.getValue()));
+      });
+    });
     return getOrThrow(id);
   }
 
