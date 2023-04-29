@@ -163,9 +163,8 @@ public class TbTeamProductCustomImpl implements TbTeamProductCustom {
   private JPAQuery<Tuple> getTeamPlaceProductQuery(QTuple select, TbTeamPlace place, String value, Pageable pageable) {
     JPAQuery<Tuple> query = queryFactory.select(select)
         .from(tbTeamProduct)
-        .leftJoin(tbTeamProdPlace).on(tbTeamProdPlace.place.id.eq(place.getId())
-            .and(tbTeamProdPlace.product.id.eq(tbTeamProduct.id)));
-
+        .leftJoin(tbTeamProdPlace).on(tbTeamProdPlace.place.id.eq(place.getId()));
+    query.where(tbTeamProdPlace.product.id.eq(tbTeamProduct.id));
     // 속성의 값을 비교할 경우는 tbTeamProdAttr도 조인 해줘야 함.
     if (StringUtils.hasLength(value)) {
       query.leftJoin(tbTeamProdAttr)
