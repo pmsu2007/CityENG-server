@@ -86,7 +86,7 @@ public class ApiTeamAttrService {
     if (!values.isEmpty()) {
       return values;
     }
-    return storeProdAttr.findValuesByAttrGroupBy(attr);
+    return storeProdAttr.findValuesByAttrGroupBy(attr.getId());
   }
 
 }
