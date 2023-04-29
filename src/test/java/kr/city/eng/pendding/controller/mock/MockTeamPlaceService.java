@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -26,19 +27,19 @@ public class MockTeamPlaceService extends MockService {
   }
 
   private TeamPlace convertDto(MvcResult result) throws Exception {
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<TeamPlace>() {
     });
   }
 
   private List<TeamPlace> convertList(MvcResult result) throws Exception {
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<List<TeamPlace>>() {
     });
   }
 
   private List<TeamPlace> convertPage(MvcResult result) throws Exception {
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<List<TeamPlace>>() {
     }, "content");
   }

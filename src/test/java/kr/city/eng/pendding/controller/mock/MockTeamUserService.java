@@ -3,6 +3,7 @@ package kr.city.eng.pendding.controller.mock;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -18,7 +19,7 @@ public class MockTeamUserService extends MockService {
   }
 
   private TeamUser convertDto(MvcResult result) throws Exception {
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<TeamUser>() {
     });
   }

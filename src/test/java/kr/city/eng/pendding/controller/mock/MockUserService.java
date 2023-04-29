@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class MockUserService extends MockService {
   }
 
   private User convertUser(MvcResult result) throws Exception {
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<User>() {
     });
   }
@@ -45,7 +46,7 @@ public class MockUserService extends MockService {
             .accept(MediaType.APPLICATION_JSON_VALUE).content(content))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andReturn().getResponse().getContentAsString();
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<Map<String, String>>() {
     }).get("apikey");
   }
@@ -80,7 +81,7 @@ public class MockUserService extends MockService {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
         .andReturn();
 
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<List<User>>() {
     });
   }
@@ -127,7 +128,7 @@ public class MockUserService extends MockService {
         .andExpect(jsonPath("$.result", is(notNullValue())))
         .andReturn();
 
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<Map<String, Boolean>>() {
     }).get("result");
   }
@@ -139,7 +140,7 @@ public class MockUserService extends MockService {
         .andExpect(jsonPath("$.result", is(notNullValue())))
         .andReturn();
 
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<Map<String, Boolean>>() {
     }).get("result");
   }
@@ -150,7 +151,7 @@ public class MockUserService extends MockService {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
         .andReturn();
 
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<List<TeamInfo>>() {
     });
   }

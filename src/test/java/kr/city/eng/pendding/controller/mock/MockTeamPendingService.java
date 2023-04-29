@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -21,7 +22,7 @@ public class MockTeamPendingService extends MockService {
   }
 
   private TeamPending convertDto(MvcResult result) throws Exception {
-    String json = result.getResponse().getContentAsString();
+    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
     return getData(json, new TypeReference<TeamPending>() {
     });
   }
